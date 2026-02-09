@@ -25,11 +25,13 @@ class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
         t.string :email, null: false
         t.string :password_hash, null: false
         t.boolean :account_status, null: false
+        t.references :person, null: false, foreign_key: true
 
         t.timestamps
       end
     end
     add_index :accounts, :email, unique: true unless index_exists?(:accounts, :email)
+    add_index :accounts, :person_id, unique: true unless index_exists?(:accounts, :person_id)
 
     # Collaborator Roles
     unless table_exists?(:collaborator_roles)
@@ -67,9 +69,9 @@ class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
       end
     end
 
-    # Modules
-    unless table_exists?(:modules)
-      create_table :modules do |t|
+    # School Modules
+    unless table_exists?(:school_modules)
+      create_table :school_modules do |t|
         t.string :name, null: false
 
         t.timestamps
@@ -80,7 +82,7 @@ class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
     unless table_exists?(:units)
       create_table :units do |t|
         t.string :name, null: false
-        t.references :module, null: false, foreign_key: { to_table: :modules }
+        t.references :school_module, null: false, foreign_key: true
 
         t.timestamps
       end
@@ -107,9 +109,9 @@ class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
       end
     end
 
-    # Classes
-    unless table_exists?(:classes)
-      create_table :classes do |t|
+    # School Classes
+    unless table_exists?(:school_classes)
+      create_table :school_classes do |t|
         t.string :name, null: false
         t.references :domain, null: false, foreign_key: true
         t.references :training_plan, null: false, foreign_key: true
@@ -119,7 +121,7 @@ class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
         t.timestamps
       end
     end
-    add_index :classes, :name, unique: true unless index_exists?(:classes, :name)
+    add_index :school_classes, :name, unique: true unless index_exists?(:school_classes, :name)
 
     # Students
     unless table_exists?(:students)
@@ -129,14 +131,12 @@ class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
         t.boolean :repeat_year
         t.references :person, null: false, foreign_key: { to_table: :persons }
         t.references :leaving_reason, foreign_key: { to_table: :leaving_reasons }
-        t.references :account, null: false, foreign_key: { to_table: :accounts }
-        t.references :class, null: false, foreign_key: { to_table: :classes }
+        t.references :school_class, null: false, foreign_key: true
 
         t.timestamps
       end
     end
     add_index :students, :person_id, unique: true unless index_exists?(:students, :person_id)
-    add_index :students, :account_id, unique: true unless index_exists?(:students, :account_id)
 
     # Schedules
     unless table_exists?(:schedules)
@@ -144,7 +144,7 @@ class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
         t.date :day, null: false
         t.time :start_time, null: false
         t.time :end_time, null: false
-        t.references :class, foreign_key: { to_table: :classes }
+        t.references :school_class, foreign_key: true
         t.references :collaborator, null: false, foreign_key: true
 
         t.timestamps
@@ -178,20 +178,20 @@ class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
                                      %i[collaborator_id collaborator_role_id],
                                      name: 'index_cra_on_collaborator_and_role')
 
-    # Training Plans - Modules (N-N)
+    # Training Plans - School Modules (N-N)
     unless table_exists?(:training_plan_modules)
       create_table :training_plan_modules, id: false do |t|
         t.references :training_plan, null: false, foreign_key: true
-        t.references :module, null: false, foreign_key: { to_table: :modules }
+        t.references :school_module, null: false, foreign_key: true
       end
     end
     add_index :training_plan_modules,
-              %i[training_plan_id module_id],
+              %i[training_plan_id school_module_id],
               unique: true,
-              name: 'index_tpm_on_training_plan_and_module' \
+              name: 'index_tpm_on_training_plan_and_school_module' \
                 unless index_exists?(:training_plan_modules,
-                                     %i[training_plan_id module_id],
-                                     name: 'index_tpm_on_training_plan_and_module')
+                                     %i[training_plan_id school_module_id],
+                                     name: 'index_tpm_on_training_plan_and_school_module')
 
     # Schedules - Units (N-N)
     unless table_exists?(:schedule_units)
