@@ -16,21 +16,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_123831) do
     t.datetime "created_at", null: false
     t.string "email", null: false
     t.string "password_hash", null: false
+    t.bigint "person_id", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_accounts_on_email", unique: true
+    t.index ["person_id"], name: "index_accounts_on_person_id", unique: true
   end
 
-  create_table "classes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "school_classes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "domain_id", null: false
     t.string "name", null: false
     t.bigint "responsible_collaborator_id", null: false
     t.bigint "training_plan_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["domain_id"], name: "index_classes_on_domain_id"
-    t.index ["name"], name: "index_classes_on_name", unique: true
-    t.index ["responsible_collaborator_id"], name: "index_classes_on_responsible_collaborator_id"
-    t.index ["training_plan_id"], name: "index_classes_on_training_plan_id"
+    t.index ["domain_id"], name: "index_school_classes_on_domain_id"
+    t.index ["name"], name: "index_school_classes_on_name", unique: true
+    t.index ["responsible_collaborator_id"], name: "index_school_classes_on_responsible_collaborator_id"
+    t.index ["training_plan_id"], name: "index_school_classes_on_training_plan_id"
   end
 
   create_table "collaborator_role_assignments", id: false, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -80,7 +82,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_123831) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "modules", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "school_modules", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name", null: false
     t.datetime "updated_at", null: false
@@ -125,38 +127,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_123831) do
   end
 
   create_table "schedules", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "class_id"
+    t.bigint "school_class_id"
     t.bigint "collaborator_id", null: false
     t.datetime "created_at", null: false
     t.date "day", null: false
     t.time "end_time", null: false
     t.time "start_time", null: false
     t.datetime "updated_at", null: false
-    t.index ["class_id"], name: "index_schedules_on_class_id"
+    t.index ["school_class_id"], name: "index_schedules_on_school_class_id"
     t.index ["collaborator_id"], name: "index_schedules_on_collaborator_id"
   end
 
   create_table "students", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "account_id", null: false
     t.date "admission_date"
-    t.bigint "class_id", null: false
+    t.bigint "school_class_id", null: false
     t.datetime "created_at", null: false
     t.date "leaving_date"
     t.bigint "leaving_reason_id"
     t.bigint "person_id", null: false
     t.boolean "repeat_year"
     t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_students_on_account_id"
-    t.index ["class_id"], name: "index_students_on_class_id"
+    t.index ["school_class_id"], name: "index_students_on_school_class_id"
     t.index ["leaving_reason_id"], name: "index_students_on_leaving_reason_id"
-    t.index ["person_id"], name: "index_students_on_person_id"
+    t.index ["person_id"], name: "index_students_on_person_id", unique: true
   end
 
   create_table "training_plan_modules", id: false, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "module_id", null: false
+    t.bigint "school_module_id", null: false
     t.bigint "training_plan_id", null: false
-    t.index ["module_id"], name: "index_training_plan_modules_on_module_id"
-    t.index ["training_plan_id", "module_id"], name: "index_tpm_on_training_plan_and_module", unique: true
+    t.index ["school_module_id"], name: "index_training_plan_modules_on_school_module_id"
+    t.index ["training_plan_id", "school_module_id"], name: "index_tpm_on_training_plan_and_school_module", unique: true
     t.index ["training_plan_id"], name: "index_training_plan_modules_on_training_plan_id"
   end
 
@@ -168,15 +168,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_123831) do
 
   create_table "units", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.bigint "module_id", null: false
+    t.bigint "school_module_id", null: false
     t.string "name", null: false
     t.datetime "updated_at", null: false
-    t.index ["module_id"], name: "index_units_on_module_id"
+    t.index ["school_module_id"], name: "index_units_on_school_module_id"
   end
 
-  add_foreign_key "classes", "collaborators", column: "responsible_collaborator_id"
-  add_foreign_key "classes", "domains"
-  add_foreign_key "classes", "training_plans"
+  add_foreign_key "accounts", "persons"
+  add_foreign_key "school_classes", "collaborators", column: "responsible_collaborator_id"
+  add_foreign_key "school_classes", "domains"
+  add_foreign_key "school_classes", "training_plans"
   add_foreign_key "collaborator_role_assignments", "collaborator_roles"
   add_foreign_key "collaborator_role_assignments", "collaborators"
   add_foreign_key "collaborators", "persons"
@@ -186,13 +187,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_123831) do
   add_foreign_key "schedule_rooms", "schedules"
   add_foreign_key "schedule_units", "schedules"
   add_foreign_key "schedule_units", "units"
-  add_foreign_key "schedules", "classes"
+  add_foreign_key "schedules", "school_classes"
   add_foreign_key "schedules", "collaborators"
-  add_foreign_key "students", "accounts"
-  add_foreign_key "students", "classes"
+  add_foreign_key "students", "school_classes"
   add_foreign_key "students", "leaving_reasons"
   add_foreign_key "students", "persons"
-  add_foreign_key "training_plan_modules", "modules"
+  add_foreign_key "training_plan_modules", "school_modules"
   add_foreign_key "training_plan_modules", "training_plans"
-  add_foreign_key "units", "modules"
+  add_foreign_key "units", "school_modules"
 end
