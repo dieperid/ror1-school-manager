@@ -22,19 +22,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_123831) do
     t.index ["person_id"], name: "index_accounts_on_person_id", unique: true
   end
 
-  create_table "school_classes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.bigint "domain_id", null: false
-    t.string "name", null: false
-    t.bigint "responsible_collaborator_id", null: false
-    t.bigint "training_plan_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["domain_id"], name: "index_school_classes_on_domain_id"
-    t.index ["name"], name: "index_school_classes_on_name", unique: true
-    t.index ["responsible_collaborator_id"], name: "index_school_classes_on_responsible_collaborator_id"
-    t.index ["training_plan_id"], name: "index_school_classes_on_training_plan_id"
-  end
-
   create_table "collaborator_role_assignments", id: false, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "collaborator_id", null: false
     t.bigint "collaborator_role_id", null: false
@@ -82,12 +69,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_123831) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "school_modules", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "name", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "persons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "avs_number", null: false
     t.date "birth_date"
@@ -127,29 +108,48 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_123831) do
   end
 
   create_table "schedules", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "school_class_id"
     t.bigint "collaborator_id", null: false
     t.datetime "created_at", null: false
     t.date "day", null: false
     t.time "end_time", null: false
+    t.bigint "school_class_id"
     t.time "start_time", null: false
     t.datetime "updated_at", null: false
-    t.index ["school_class_id"], name: "index_schedules_on_school_class_id"
     t.index ["collaborator_id"], name: "index_schedules_on_collaborator_id"
+    t.index ["school_class_id"], name: "index_schedules_on_school_class_id"
+  end
+
+  create_table "school_classes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "domain_id", null: false
+    t.string "name", null: false
+    t.bigint "responsible_collaborator_id", null: false
+    t.bigint "training_plan_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["domain_id"], name: "index_school_classes_on_domain_id"
+    t.index ["name"], name: "index_school_classes_on_name", unique: true
+    t.index ["responsible_collaborator_id"], name: "index_school_classes_on_responsible_collaborator_id"
+    t.index ["training_plan_id"], name: "index_school_classes_on_training_plan_id"
+  end
+
+  create_table "school_modules", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "students", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.date "admission_date"
-    t.bigint "school_class_id", null: false
     t.datetime "created_at", null: false
     t.date "leaving_date"
     t.bigint "leaving_reason_id"
     t.bigint "person_id", null: false
     t.boolean "repeat_year"
+    t.bigint "school_class_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["school_class_id"], name: "index_students_on_school_class_id"
     t.index ["leaving_reason_id"], name: "index_students_on_leaving_reason_id"
     t.index ["person_id"], name: "index_students_on_person_id", unique: true
+    t.index ["school_class_id"], name: "index_students_on_school_class_id"
   end
 
   create_table "training_plan_modules", id: false, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -168,16 +168,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_123831) do
 
   create_table "units", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.bigint "school_module_id", null: false
     t.string "name", null: false
+    t.bigint "school_module_id", null: false
     t.datetime "updated_at", null: false
     t.index ["school_module_id"], name: "index_units_on_school_module_id"
   end
 
   add_foreign_key "accounts", "persons"
-  add_foreign_key "school_classes", "collaborators", column: "responsible_collaborator_id"
-  add_foreign_key "school_classes", "domains"
-  add_foreign_key "school_classes", "training_plans"
   add_foreign_key "collaborator_role_assignments", "collaborator_roles"
   add_foreign_key "collaborator_role_assignments", "collaborators"
   add_foreign_key "collaborators", "persons"
@@ -187,11 +184,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_123831) do
   add_foreign_key "schedule_rooms", "schedules"
   add_foreign_key "schedule_units", "schedules"
   add_foreign_key "schedule_units", "units"
-  add_foreign_key "schedules", "school_classes"
   add_foreign_key "schedules", "collaborators"
-  add_foreign_key "students", "school_classes"
+  add_foreign_key "schedules", "school_classes"
+  add_foreign_key "school_classes", "collaborators", column: "responsible_collaborator_id"
+  add_foreign_key "school_classes", "domains"
+  add_foreign_key "school_classes", "training_plans"
   add_foreign_key "students", "leaving_reasons"
   add_foreign_key "students", "persons"
+  add_foreign_key "students", "school_classes"
   add_foreign_key "training_plan_modules", "school_modules"
   add_foreign_key "training_plan_modules", "training_plans"
   add_foreign_key "units", "school_modules"
