@@ -1,8 +1,8 @@
 class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
   def change
-    # Persons
-    unless table_exists?(:persons)
-      create_table :persons do |t|
+    # People
+    unless table_exists?(:people)
+      create_table :people do |t|
         t.string :avs_number, null: false
         t.string :last_name, null: false
         t.string :first_name, null: false
@@ -17,20 +17,20 @@ class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
         t.timestamps
       end
     end
-    add_index :persons, :avs_number, unique: true unless index_exists?(:persons, :avs_number)
+    add_index :people, :avs_number, unique: true unless index_exists?(:people, :avs_number)
 
     # Accounts
     unless table_exists?(:accounts)
       create_table :accounts do |t|
-        t.string :email, null: false
-        t.string :password_hash, null: false
+        t.string :email_address, null: false
+        t.string :password_digest, null: false
         t.boolean :account_status, null: false
         t.references :person, null: false, foreign_key: true
 
         t.timestamps
       end
     end
-    add_index :accounts, :email, unique: true unless index_exists?(:accounts, :email)
+    add_index :accounts, :email_address, unique: true unless index_exists?(:accounts, :email_address)
     add_index :accounts, :person_id, unique: true unless index_exists?(:accounts, :person_id)
 
     # Collaborator Roles
@@ -103,7 +103,7 @@ class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
         t.date :contract_start
         t.date :contract_end
         t.boolean :is_teacher
-        t.references :person, null: false, foreign_key: { to_table: :persons }
+        t.references :person, null: false, foreign_key: true
 
         t.timestamps
       end
@@ -129,7 +129,7 @@ class CreateSchoolManagerSchema < ActiveRecord::Migration[8.1]
         t.date :admission_date
         t.date :leaving_date
         t.boolean :repeat_year
-        t.references :person, null: false, foreign_key: { to_table: :persons }
+        t.references :person, null: false, foreign_key: true
         t.references :leaving_reason, foreign_key: { to_table: :leaving_reasons }
         t.references :school_class, null: false, foreign_key: true
 
