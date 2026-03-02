@@ -163,7 +163,7 @@ CREATE TABLE IF NOT EXISTS people (
 CREATE TABLE IF NOT EXISTS accounts (
     id BIGINT PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
-    password_digest VARCHAR(255) NOT NULL,
+    encrypted_password VARCHAR(255) NOT NULL,
     enabled BOOLEAN NOT NULL,
     person_id BIGINT NOT NULL,
     CONSTRAINT fk_accounts_person FOREIGN KEY (person_id) REFERENCES people(id),
