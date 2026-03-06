@@ -1,9 +1,17 @@
 Rails.application.routes.draw do
-  devise_for :accounts
+  devise_for :accounts, skip: [:registrations]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  devise_scope :account do
+  authenticated :account do
+    root to: "dashboard#show", as: :authenticated_root
+  end
+
+  unauthenticated do
     root to: "devise/sessions#new"
+  end
+
+  namespace :admin do
+    resources :people, only: %i[index new create]
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
