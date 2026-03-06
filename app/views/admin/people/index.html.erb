@@ -1,0 +1,62 @@
+<% content_for :title, "People" %>
+
+<section class="page-heading">
+  <div>
+    <h1>People</h1>
+    <p>Create a person first, then optionally attach an account and send the invitation email immediately.</p>
+  </div>
+  <%= link_to "New person", new_admin_person_path, class: "primary-link" %>
+</section>
+
+<% if @people.any? %>
+  <div class="card">
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>AVS</th>
+          <th>Contact</th>
+          <th>Account</th>
+          <th>Invite</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @people.each do |person| %>
+          <% account = person.account %>
+          <tr>
+            <td><strong><%= person.full_name %></strong></td>
+            <td><%= person.avs_number %></td>
+            <td>
+              <div><%= [person.street, person.street_number].compact.join(" ") %></div>
+              <div><%= [person.postal_code, person.city].compact.join(" ") %></div>
+              <div><%= person.phone_number.presence || "No phone number" %></div>
+            </td>
+            <td>
+              <% if account.present? %>
+                <div><%= account.email %></div>
+                <div><%= account.admin? ? "Admin account" : "Standard account" %></div>
+                <div><%= account.enabled? ? "Enabled" : "Disabled" %></div>
+              <% else %>
+                <div>No account linked</div>
+              <% end %>
+            </td>
+            <td>
+              <% if account&.invited_at.present? %>
+                <%= l(account.invited_at, format: :long) %>
+              <% elsif account.present? %>
+                Not sent yet
+              <% else %>
+                No invite
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <section class="card">
+    <h2>No people yet</h2>
+    <p>Create the first person and optionally send the account invitation in the same action.</p>
+  </section>
+<% end %>
