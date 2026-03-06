@@ -1,24 +1,5 @@
-# README
+# Ror1 School Manager
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Documentation for the admin-managed authentication and invitation flow is available here:
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- [docs/authentication_and_invitation_flow.md](docs/authentication_and_invitation_flow.md)
