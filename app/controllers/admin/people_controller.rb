@@ -25,7 +25,7 @@ module Admin
     def build_person
       @person = Person.new
       @account_email = account_params[:email].to_s.strip.downcase
-      @account_admin = ActiveModel::Type::Boolean.new.cast(account_params[:admin])
+      @account_admin = ActiveModel::Type::Boolean.new.cast(account_params.fetch(:admin, "0")) || false
     end
 
     def person_params

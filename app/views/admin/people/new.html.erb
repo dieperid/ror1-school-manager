@@ -69,6 +69,7 @@
         </div>
 
         <div class="checkbox-row">
+          <%= hidden_field_tag "account[admin]", "0" %>
           <%= check_box_tag "account[admin]", "1", @account_admin %>
           <%= label_tag "account_admin", "Grant admin access" %>
         </div>
