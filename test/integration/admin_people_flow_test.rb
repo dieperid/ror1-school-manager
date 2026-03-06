@@ -5,6 +5,13 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
     ActionMailer::Base.deliveries.clear
   end
 
+  test "guest root renders the devise sign in page" do
+    get root_path
+
+    assert_response :success
+    assert_match "Log in", response.body
+  end
+
   test "public sign up route is unavailable" do
     get "/accounts/sign_up"
 
@@ -39,8 +46,7 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
             phone_number: "0770000000"
           },
           account: {
-            email: "jane.doe@example.com",
-            admin: "0"
+            email: "jane.doe@example.com"
           }
         }
       end
