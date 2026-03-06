@@ -6,8 +6,10 @@ Rails.application.routes.draw do
     root to: "dashboard#show", as: :authenticated_root
   end
 
-  unauthenticated do
-    root to: "devise/sessions#new"
+  devise_scope :account do
+    unauthenticated :account do
+      root to: "devise/sessions#new"
+    end
   end
 
   namespace :admin do
