@@ -10,14 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_02_110000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_06_150000) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "current_sign_in_at"
     t.string "current_sign_in_ip"
     t.string "email", default: "", null: false
     t.boolean "enabled", default: true, null: false
     t.string "encrypted_password", default: "", null: false
+    t.datetime "invited_at"
     t.datetime "last_sign_in_at"
     t.string "last_sign_in_ip"
     t.bigint "person_id", null: false
