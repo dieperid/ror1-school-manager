@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>
     <%= content_for(:title) || "Ror1 School Manager" %>
@@ -21,15 +20,33 @@
             <link rel="icon" href="/icon.svg" type="image/svg+xml">
             <link rel="apple-touch-icon" href="/icon.png">
 </head>
-
 <body>
-  <p class="notice">
-    <%= notice %>
-  </p>
-  <p class="alert">
-    <%= alert %>
-  </p>
-  <%= yield %>
-</body>
+  <header class="topbar">
+    <div>
+      <%= link_to "Ror1 School Manager", root_path, class: "brand" %>
+    </div>
 
+    <% if account_signed_in? %>
+      <nav class="topbar-actions">
+        <% if current_account.admin? %>
+          <%= link_to "People", admin_people_path %>
+        <% end %>
+        <span><%= current_account.person.full_name %></span>
+        <%= button_to "Log out", destroy_account_session_path, method: :delete, class: "secondary-button" %>
+      </nav>
+    <% end %>
+  </header>
+
+  <main class="page-shell">
+    <% if notice.present? %>
+      <p class="flash flash-notice"><%= notice %></p>
+    <% end %>
+
+    <% if alert.present? %>
+      <p class="flash flash-alert"><%= alert %></p>
+    <% end %>
+
+    <%= yield %>
+  </main>
+</body>
 </html>
