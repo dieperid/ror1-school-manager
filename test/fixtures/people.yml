@@ -1,0 +1,25 @@
+admin_person:
+  avs_number: "756.0000.0000.01"
+  first_name: "System"
+  last_name: "Administrator"
+  city: "Lausanne"
+  birth_date: 1990-01-01
+  postal_code: "1000"
+  street: "Admin Street"
+  street_number: 1
+  phone_number: "0790000000"
+  created_at: <%= 5.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+member_person:
+  avs_number: "756.0000.0000.02"
+  first_name: "Regular"
+  last_name: "Member"
+  city: "Geneva"
+  birth_date: 1995-06-10
+  postal_code: "1200"
+  street: "Lake Road"
+  street_number: 8
+  phone_number: "0780000000"
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
