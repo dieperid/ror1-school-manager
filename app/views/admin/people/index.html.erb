@@ -3,7 +3,7 @@
 <section class="page-heading">
   <div>
     <h1>People</h1>
-    <p>Create a person first, then optionally attach an account and send the invitation email immediately.</p>
+    <p>Create a person first, then optionally attach an account and download the password setup link as a text file.</p>
   </div>
   <%= link_to "New person", new_admin_person_path, class: "primary-link" %>
 </section>
@@ -41,10 +41,13 @@
               <% end %>
             </td>
             <td>
-              <% if account&.invited_at.present? %>
-                <%= l(account.invited_at, format: :long) %>
-              <% elsif account.present? %>
-                Not sent yet
+              <% if account.present? %>
+                <% if account.invited_at.present? %>
+                  <div>Last generated: <%= l(account.invited_at, format: :long) %></div>
+                <% else %>
+                  <div>Not generated yet</div>
+                <% end %>
+                <div><%= link_to "Download invite (.txt)", invitation_admin_person_path(person, format: :txt) %></div>
               <% else %>
                 No invite
               <% end %>
@@ -57,6 +60,6 @@
 <% else %>
   <section class="card">
     <h2>No people yet</h2>
-    <p>Create the first person and optionally send the account invitation in the same action.</p>
+    <p>Create the first person and optionally generate the account invitation file in the same action.</p>
   </section>
 <% end %>

@@ -11,7 +11,7 @@
 <section class="card">
   <%= render "accounts/shared/error_messages", resource: @person %>
 
-  <%= form_with model: [:admin, @person] do |form| %>
+  <%= form_with model: [:admin, @person], data: { turbo: false } do |form| %>
     <div class="form-grid">
       <div>
         <%= form.label :first_name %>
@@ -75,7 +75,7 @@
         </div>
       </div>
 
-      <p class="form-hint">When an email is present, the app creates the linked account and sends a password setup email immediately.</p>
+      <p class="form-hint">When an email is present, the app creates the linked account and downloads a text file with the username and password setup link.</p>
     </fieldset>
 
     <div class="form-actions">

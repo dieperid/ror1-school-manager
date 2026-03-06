@@ -1,6 +1,7 @@
 module Admin
   class PeopleController < BaseController
     before_action :build_person, only: %i[new create]
+    before_action :set_person, only: :invitation
 
     def index
       @people = Person.includes(:account).order(:last_name, :first_name)
@@ -14,10 +15,28 @@ module Admin
 
       if valid_submission?
         save_person_and_account!
-        redirect_to admin_people_path, notice: success_message
+        redirect_after_create
       else
         render :new, status: :unprocessable_entity
       end
+    end
+
+    def invitation
+      account = @person.account
+
+      if account.blank?
+        redirect_to admin_people_path, alert: "This person does not have a linked account."
+        return
+      end
+
+      token = account.generate_password_setup_token!
+
+      send_data(
+        invitation_contents(account, token),
+        filename: invitation_filename,
+        type: "text/plain; charset=utf-8",
+        disposition: "attachment"
+      )
     end
 
     private
@@ -44,6 +63,10 @@ module Admin
 
     def account_params
       params.fetch(:account, {}).permit(:email, :admin)
+    end
+
+    def set_person
+      @person = Person.find(params[:id])
     end
 
     def account_requested?
@@ -83,8 +106,15 @@ module Admin
         if account_requested?
           invitation_account.person = @person
           invitation_account.save!
-          invitation_account.deliver_invitation!
         end
+      end
+    end
+
+    def redirect_after_create
+      if account_requested?
+        redirect_to invitation_admin_person_path(@person, format: :txt)
+      else
+        redirect_to admin_people_path, notice: success_message
       end
     end
 
@@ -92,7 +122,23 @@ module Admin
       message = "#{@person.full_name} was created."
       return message unless account_requested?
 
-      "#{message} An invitation was sent to #{@account_email}."
+      "#{message} The invitation file is ready for download."
+    end
+
+    def invitation_contents(account, token)
+      <<~TEXT
+        Ror1 School Manager account invitation
+
+        Name: #{@person.full_name}
+        Username: #{account.email}
+
+        Set password link:
+        #{edit_account_password_url(reset_password_token: token)}
+      TEXT
+    end
+
+    def invitation_filename
+      "#{@person.full_name.parameterize.presence || "person"}-invitation.txt"
     end
   end
 end

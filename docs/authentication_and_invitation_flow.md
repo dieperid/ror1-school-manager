@@ -9,8 +9,9 @@ The onboarding flow is now:
 1. An administrator logs in.
 2. The administrator creates a `Person`.
 3. The administrator optionally creates a linked `Account`.
-4. If an account is created, the application sends an invitation email.
-5. The invited user sets their password through the Devise reset-password screen and can then sign in.
+4. If an account is created, the application generates a text file containing the username and password setup link.
+5. The administrator shares that file or its contents with the user.
+6. The invited user sets their password through the Devise reset-password screen and can then sign in.
 
 ## Core Rules
 
@@ -18,7 +19,7 @@ The onboarding flow is now:
 - `Person` has one `Account`.
 - Public sign-up is disabled.
 - Only admin accounts can access the people management screens.
-- Invitation emails reuse Devise's reset-password mechanism.
+- Invitation links reuse Devise's reset-password mechanism.
 
 ## Data Model
 
@@ -51,7 +52,7 @@ Important flags:
 
 - `enabled`: if `false`, the user cannot authenticate.
 - `admin`: grants access to the admin area.
-- `invited_at`: timestamp set when the invitation email is sent.
+- `invited_at`: timestamp set when the invitation file is generated.
 
 ## What Changed Compared To Default Devise
 
@@ -61,17 +62,17 @@ Important flags:
 - `/accounts/sign_up` is not available.
 - The sign-up link was removed from shared Devise views.
 
-### Invitation email is based on password reset
+### Invitation file is based on password reset
 
-Instead of adding `devise_invitable`, the application sends the standard Devise reset-password instructions when an admin creates an account.
+Instead of adding `devise_invitable`, the application generates the standard Devise reset-password token when an admin creates an account.
 
 For a first-time account:
 
 - a temporary password is generated internally,
 - the account is created,
 - `invited_at` is filled,
-- Devise sends the reset-password email,
-- the user chooses their real password from the email link.
+- the application creates a text file with the username and reset link,
+- the user chooses their real password from that link.
 
 This keeps the flow simple and avoids adding another gem.
 
@@ -166,13 +167,13 @@ If the email field is empty:
 
 - only the `Person` record is created,
 - no account is created,
-- no invitation email is sent.
+- no invitation file is generated.
 
 If the email field is filled:
 
 - a linked `Account` is created,
 - the account is enabled by default,
-- the invitation email is sent immediately.
+- an invitation text file is downloaded immediately.
 
 ## Invitation Flow
 
@@ -182,22 +183,22 @@ When an admin creates an account:
 2. The application creates the `Account`.
 3. A temporary password is generated internally.
 4. `invited_at` is set.
-5. `send_reset_password_instructions` is called.
-6. The recipient receives an email with a "Set my password" link.
+5. A reset-password token is generated.
+6. The application downloads a `.txt` file containing the username and the password setup link.
 
-The email template is customized so the message reads like an invitation for first-time users, while still using Devise's reset-password token flow.
+The application can also regenerate that text file later from the admin people list.
 
 ## Recipient Workflow
 
 The invited user:
 
-1. opens the email,
+1. receives the text file or copied link from the administrator,
 2. clicks "Set my password",
 3. chooses a password,
 4. submits the Devise password reset form,
 5. is then able to sign in normally.
 
-After that point, later password reset emails behave like standard password reset emails.
+After that point, later password resets still use the standard Devise reset token flow.
 
 ## Access Control
 
@@ -222,7 +223,7 @@ An admin account can:
 - access the admin area,
 - create `Person` records,
 - create linked `Account` records,
-- send invitation emails through account creation.
+- generate invitation files through account creation.
 
 ## Disabled Accounts
 
@@ -233,15 +234,11 @@ If `enabled` is `false`:
 - the account cannot sign in,
 - Devise returns a disabled-account message.
 
-## Mailer Configuration
+## Link Generation
 
-The invitation email uses Devise mail delivery, so these settings must be correct:
+The invitation file contains a full reset-password URL generated from the current application request.
 
-- `config.action_mailer.default_url_options`
-- SMTP or your chosen delivery configuration
-- `config.mailer_sender` in `config/initializers/devise.rb`
-
-If mail delivery is not configured correctly, the account may still be created but the recipient will not receive the invitation email.
+That means the downloaded link is based on the host and port the admin used to access the app.
 
 ## Relevant Files
 
@@ -253,7 +250,6 @@ Main implementation files:
 - `app/controllers/admin/base_controller.rb`
 - `app/views/admin/people/new.html.erb`
 - `app/views/admin/people/index.html.erb`
-- `app/views/accounts/mailer/reset_password_instructions.html.erb`
 - `config/routes.rb`
 - `db/seeds.rb`
 - `db/migrate/20260306150000_add_admin_and_invited_at_to_accounts.rb`
@@ -276,18 +272,16 @@ Then:
 1. log in with the seeded admin account,
 2. open `/admin/people`,
 3. create a person,
-4. provide an email if you want to send an invite immediately.
+4. provide an email if you want to generate an invite immediately.
 
 ## Troubleshooting
 
-### Sign-in works but no email arrives
+### The downloaded link points to the wrong host
 
 Check:
 
-- mailer sender configuration,
-- SMTP settings,
-- `config.action_mailer.default_url_options`,
-- development/test mail delivery behavior.
+- the URL used by the admin to access the app
+- reverse proxy or host configuration in front of Rails
 
 ### Admin routes return access denied
 

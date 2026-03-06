@@ -1,10 +1,8 @@
 require "test_helper"
+require "cgi"
+require "uri"
 
 class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
-  setup do
-    ActionMailer::Base.deliveries.clear
-  end
-
   test "guest root renders the devise sign in page" do
     get root_path
 
@@ -28,7 +26,7 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
     assert_match "You are not allowed to access the admin area.", response.body
   end
 
-  test "admin creates a person and sends an invitation" do
+  test "admin creates a person and downloads an invitation file" do
     sign_in accounts(:admin)
 
     assert_difference("Person.count", 1) do
@@ -52,17 +50,26 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
       end
     end
 
-    assert_redirected_to admin_people_path
-    follow_redirect!
-    assert_match "An invitation was sent to jane.doe@example.com.", response.body
-
     person = Person.find_by!(avs_number: "756.0000.0000.03")
     account = person.account
 
+    assert_redirected_to invitation_admin_person_path(person, format: :txt)
+    follow_redirect!
+
+    assert_response :success
+    assert_equal "text/plain", response.media_type
+    assert_includes response.headers["Content-Disposition"], ".txt"
+    assert_match "Username: jane.doe@example.com", response.body
+    assert_match "Set password link:", response.body
     assert_equal "jane.doe@example.com", account.email
     assert_not account.admin?
     assert_not_nil account.invited_at
     assert_not_nil account.reset_password_token
-    assert_equal 1, ActionMailer::Base.deliveries.size
+
+    url = response.body.lines.find { |line| line.start_with?("http") }&.strip
+    assert_not_nil url
+
+    token = CGI.parse(URI.parse(url).query).fetch("reset_password_token").first
+    assert_equal account.id, Account.with_reset_password_token(token).id
   end
 end

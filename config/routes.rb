@@ -13,7 +13,11 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
-    resources :people, only: %i[index new create]
+    resources :people, only: %i[index new create] do
+      member do
+        get :invitation, defaults: { format: :txt }
+      end
+    end
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

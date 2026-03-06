@@ -24,8 +24,9 @@ class Account < ApplicationRecord
     enabled? ? super : :disabled
   end
 
-  def deliver_invitation!
+  def generate_password_setup_token!
+    token = send(:set_reset_password_token)
     update!(invited_at: Time.current)
-    send_reset_password_instructions
+    token
   end
 end
