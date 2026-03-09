@@ -48,6 +48,78 @@
     </div>
   </div>
 
+  <fieldset class="account-fieldset">
+    <legend>Person role</legend>
+
+    <div class="form-grid">
+      <div class="checkbox-row">
+        <%= radio_button_tag "person[role_type]", "none", role_type == "none" %>
+        <%= label_tag "person_role_type_none", "No role yet" %>
+      </div>
+
+      <div class="checkbox-row">
+        <%= radio_button_tag "person[role_type]", "collaborator", role_type == "collaborator" %>
+        <%= label_tag "person_role_type_collaborator", "Collaborator" %>
+      </div>
+
+      <div class="checkbox-row">
+        <%= radio_button_tag "person[role_type]", "student", role_type == "student" %>
+        <%= label_tag "person_role_type_student", "Student" %>
+      </div>
+    </div>
+
+    <p class="form-hint">A person can have one active role in this interface. Switching the role replaces the previous subtype record.</p>
+  </fieldset>
+
+  <fieldset class="account-fieldset">
+    <legend>Collaborator details</legend>
+
+    <div class="form-grid">
+      <div>
+        <%= label_tag "collaborator_contract_begin", "Contract begin" %>
+        <%= date_field_tag "collaborator[contract_begin]", collaborator_record.contract_begin %>
+      </div>
+
+      <div>
+        <%= label_tag "collaborator_contract_end", "Contract end" %>
+        <%= date_field_tag "collaborator[contract_end]", collaborator_record.contract_end %>
+      </div>
+    </div>
+
+    <p class="form-hint">These fields are used only when the collaborator role is selected.</p>
+  </fieldset>
+
+  <fieldset class="account-fieldset">
+    <legend>Student details</legend>
+
+    <div class="form-grid">
+      <div>
+        <%= label_tag "student_admission_date", "Admission date" %>
+        <%= date_field_tag "student[admission_date]", student_record.admission_date %>
+      </div>
+
+      <div>
+        <%= label_tag "student_departure_date", "Departure date" %>
+        <%= date_field_tag "student[departure_date]", student_record.departure_date %>
+      </div>
+
+      <div>
+        <%= label_tag "student_departure_reason_id", "Departure reason" %>
+        <%= select_tag "student[departure_reason_id]",
+                       options_from_collection_for_select(departure_reasons, :id, :title, student_record.departure_reason_id),
+                       include_blank: "None" %>
+      </div>
+
+      <div class="checkbox-row">
+        <%= hidden_field_tag "student[repeating_grade]", "0" %>
+        <%= check_box_tag "student[repeating_grade]", "1", student_record.repeating_grade %>
+        <%= label_tag "student_repeating_grade", "Repeating grade" %>
+      </div>
+    </div>
+
+    <p class="form-hint">These fields are used only when the student role is selected.</p>
+  </fieldset>
+
   <% if show_account_fields %>
     <fieldset class="account-fieldset">
       <legend>Optional account</legend>
