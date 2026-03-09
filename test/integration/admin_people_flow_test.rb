@@ -32,27 +32,33 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
     assert_difference("Person.count", 1) do
       assert_difference("Account.count", 1) do
         assert_difference("Collaborator.count", 1) do
-        post admin_people_path, params: {
-          person: {
-            avs_number: "756.0000.0000.99",
-            first_name: "Jane",
-            last_name: "Doe",
-            birth_date: "2001-04-15",
-            city: "Yverdon-les-Bains",
-            postal_code: "1400",
-            street: "Rue du Lac",
-            street_number: "11",
-            phone_number: "0770000000",
-            role_type: "collaborator"
-          },
-          collaborator: {
-            contract_begin: "2026-08-01",
-            contract_end: ""
-          },
-          account: {
-            email: "jane.doe@example.com"
-          }
-        }
+          assert_difference("CollaboratorRole.count", 1) do
+            assert_difference("CollaboratorAssignment.count", 2) do
+              post admin_people_path, params: {
+                person: {
+                  avs_number: "756.0000.0000.99",
+                  first_name: "Jane",
+                  last_name: "Doe",
+                  birth_date: "2001-04-15",
+                  city: "Yverdon-les-Bains",
+                  postal_code: "1400",
+                  street: "Rue du Lac",
+                  street_number: "11",
+                  phone_number: "0770000000",
+                  role_type: "collaborator"
+                },
+                collaborator: {
+                  contract_begin: "2026-08-01",
+                  contract_end: "",
+                  collaborator_role_ids: [collaborator_roles(:mentor_role).id],
+                  new_role_titles: "Teacher"
+                },
+                account: {
+                  email: "jane.doe@example.com"
+                }
+              }
+            end
+          end
         end
       end
     end
@@ -74,6 +80,7 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
     assert_not_nil account.reset_password_token
     assert_equal "collaborator", person.role_type
     assert_equal Date.new(2026, 8, 1), person.collaborator.contract_begin
+    assert_equal ["Mentor", "Teacher"], person.collaborator.collaborator_roles.order(:title).pluck(:title)
     assert_nil person.student
 
     url = response.body.lines.find { |line| line.start_with?("http") }&.strip
@@ -161,16 +168,22 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
 
     assert_difference("Collaborator.count", 1) do
       assert_difference("Student.count", -1) do
-        patch admin_person_path(person), params: {
-          person: {
-            role_type: "collaborator",
-            city: "Neuchatel"
-          },
-          collaborator: {
-            contract_begin: "2026-01-01",
-            contract_end: ""
-          }
-        }
+        assert_difference("CollaboratorRole.count", 1) do
+          assert_difference("CollaboratorAssignment.count", 2) do
+            patch admin_person_path(person), params: {
+              person: {
+                role_type: "collaborator",
+                city: "Neuchatel"
+              },
+              collaborator: {
+                contract_begin: "2026-01-01",
+                contract_end: "",
+                collaborator_role_ids: [collaborator_roles(:administrator_role).id],
+                new_role_titles: "Coordinator"
+              }
+            }
+          end
+        end
       end
     end
 
@@ -178,6 +191,7 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
     person.reload
     assert_equal "collaborator", person.role_type
     assert_equal Date.new(2026, 1, 1), person.collaborator.contract_begin
+    assert_equal ["Administrator", "Coordinator"], person.collaborator.collaborator_roles.order(:title).pluck(:title)
     assert_nil person.student
   end
 end

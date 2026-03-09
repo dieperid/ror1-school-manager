@@ -1,6 +1,16 @@
 require "test_helper"
 
 class ProfileFlowTest < ActionDispatch::IntegrationTest
+  test "admin profile shows collaborator roles" do
+    sign_in accounts(:admin)
+
+    get profile_path
+
+    assert_response :success
+    assert_match "Collaborator", response.body
+    assert_match "Administrator", response.body
+  end
+
   test "member can view and update personal information" do
     sign_in accounts(:member)
 

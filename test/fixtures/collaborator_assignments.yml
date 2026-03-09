@@ -1,0 +1,5 @@
+admin_is_administrator:
+  collaborator: admin_collaborator
+  collaborator_role: administrator_role
+  created_at: <%= 5.days.ago %>
+  updated_at: <%= 1.day.ago %>
