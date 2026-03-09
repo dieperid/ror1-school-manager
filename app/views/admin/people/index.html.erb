@@ -1,79 +1,96 @@
 <% content_for :title, "People" %>
 
-<section class="page-heading">
-  <div>
-    <h1>People</h1>
-    <p>Create, review, update, and remove people and their linked accounts.</p>
-  </div>
-  <%= link_to "New person", new_admin_person_path, class: "primary-link" %>
-</section>
-
-<% if @people.any? %>
-  <div class="card">
-    <table class="people-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>AVS</th>
-          <th>Contact</th>
-          <th>Account</th>
-          <th>Invite</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @people.each do |person| %>
-          <% account = person.account %>
-          <tr>
-            <td><strong><%= person.full_name %></strong></td>
-            <td><%= person.avs_number %></td>
-            <td>
-              <div><%= [person.street, person.street_number].compact.join(" ") %></div>
-              <div><%= [person.postal_code, person.city].compact.join(" ") %></div>
-              <div><%= person.phone_number.presence || "No phone number" %></div>
-            </td>
-            <td>
-              <% if account.present? %>
-                <div><%= account.email %></div>
-                <div><%= account.admin? ? "Admin account" : "Standard account" %></div>
-                <div><%= account.enabled? ? "Enabled" : "Disabled" %></div>
-              <% else %>
-                <div>No account linked</div>
-              <% end %>
-            </td>
-            <td>
-              <% if account.present? %>
-                <% if account.invited_at.present? %>
-                  <div>Last generated: <%= l(account.invited_at, format: :long) %></div>
-                <% else %>
-                  <div>Not generated yet</div>
-                <% end %>
-                <div><%= link_to "Download invite (.txt)", invitation_admin_person_path(person, format: :txt) %></div>
-              <% else %>
-                No invite
-              <% end %>
-            </td>
-            <td>
-              <div><%= link_to "View", admin_person_path(person) %></div>
-              <div><%= link_to "Edit", edit_admin_person_path(person) %></div>
-              <% unless person == current_person %>
-                <div>
-                  <%= button_to "Delete",
-                                admin_person_path(person),
-                                method: :delete,
-                                class: "secondary-button",
-                                data: { turbo_confirm: "Delete #{person.full_name}?" } %>
-                </div>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <section class="card">
-    <h2>No people yet</h2>
-    <p>Create the first person and optionally generate the account invitation file in the same action.</p>
+  <section class="page-heading">
+    <div>
+      <h1>People</h1>
+      <p>Create, review, update, and remove people and their linked accounts.</p>
+    </div>
+    <%= link_to "New person" , new_admin_person_path, class: "primary-link" %>
   </section>
-<% end %>
+
+  <% if @people.any? %>
+    <div class="card">
+      <table class="people-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>AVS</th>
+            <th>Contact</th>
+            <th>Account</th>
+            <th>Invite</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @people.each do |person| %>
+            <% account=person.account %>
+              <tr>
+                <td><strong>
+                    <%= person.full_name %>
+                  </strong></td>
+                <td>
+                  <%= person.avs_number %>
+                </td>
+                <td>
+                  <div>
+                    <%= [person.street, person.street_number].compact.join(" ") %></div>
+              <div><%= [person.postal_code, person.city].compact.join(" ") %></div>
+              <div><%= person.phone_number.presence || " No phone number" %>
+                  </div>
+                </td>
+                <td>
+                  <% if account.present? %>
+                    <div>
+                      <%= account.email %>
+                    </div>
+                    <div>
+                      <%= account.admin? ? "Admin account" : "Standard account" %>
+                    </div>
+                    <div>
+                      <%= account.enabled? ? "Enabled" : "Disabled" %>
+                    </div>
+                    <% else %>
+                      <div>No account linked</div>
+                      <% end %>
+                </td>
+                <td>
+                  <% if account.present? %>
+                    <% if account.invited_at.present? %>
+                      <div>Last generated: <%= l(account.invited_at, format: :long) %>
+                      </div>
+                      <% else %>
+                        <div>Not generated yet</div>
+                        <% end %>
+                          <div>
+                            <%= link_to "Download invite (.txt)" , admin_person_account_invitation_path(person, format:
+                              :txt) %>
+                          </div>
+                          <% else %>
+                            No invite
+                            <% end %>
+                </td>
+                <td>
+                  <div>
+                    <%= link_to "View" , admin_person_path(person) %>
+                  </div>
+                  <div>
+                    <%= link_to "Edit" , edit_admin_person_path(person) %>
+                  </div>
+                  <% unless person==current_person %>
+                    <div>
+                      <%= button_to "Delete" , admin_person_path(person), method: :delete, class: "secondary-button" ,
+                        data: { turbo_confirm: "Delete #{person.full_name}?" } %>
+                    </div>
+                    <% end %>
+                </td>
+              </tr>
+              <% end %>
+        </tbody>
+      </table>
+    </div>
+    <% else %>
+      <section class="card">
+        <h2>No people yet</h2>
+        <p>Create the first person and optionally generate the account invitation file in the same action.</p>
+      </section>
+      <% end %>
