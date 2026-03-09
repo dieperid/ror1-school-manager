@@ -2,9 +2,10 @@ module Admin
   class PeopleController < BaseController
     before_action :build_person, only: %i[new create]
     before_action :set_person, only: %i[show edit update destroy]
+    before_action :prepare_form_dependencies, only: %i[new edit]
 
     def index
-      @people = Person.includes(:account).order(:last_name, :first_name)
+      @people = Person.includes(:account, :collaborator, :student).order(:last_name, :first_name)
     end
 
     def show
@@ -15,9 +16,10 @@ module Admin
 
     def create
       @person.assign_attributes(person_params)
+      prepare_form_dependencies(assign_role_attributes: true)
 
       if valid_submission?
-        save_person_and_account!
+        save_person_with_dependencies!
         redirect_after_create
       else
         render :new, status: :unprocessable_entity
@@ -28,7 +30,11 @@ module Admin
     end
 
     def update
-      if @person.update(person_params)
+      @person.assign_attributes(person_params)
+      prepare_form_dependencies(assign_role_attributes: true)
+
+      if valid_update_submission?
+        save_person_with_dependencies!
         redirect_to admin_person_path(@person), notice: "#{@person.full_name} was updated."
       else
         render :edit, status: :unprocessable_entity
@@ -54,6 +60,18 @@ module Admin
       @account_admin = ActiveModel::Type::Boolean.new.cast(account_params.fetch(:admin, "0")) || false
     end
 
+    def prepare_form_dependencies(assign_role_attributes: false)
+      @departure_reasons = DepartureReason.order(:title)
+      @person_role_type = requested_person_role_type
+      @collaborator_form = @person.collaborator || Collaborator.new(person: @person)
+      @student_form = @person.student || Student.new(person: @person, repeating_grade: false)
+
+      return unless assign_role_attributes
+
+      @collaborator_form.assign_attributes(collaborator_attributes_for_assignment)
+      @student_form.assign_attributes(student_attributes_for_assignment)
+    end
+
     def person_params
       params.fetch(:person, {}).permit(
         :avs_number,
@@ -72,8 +90,25 @@ module Admin
       params.fetch(:account, {}).permit(:email, :admin)
     end
 
+    def collaborator_params
+      params.fetch(:collaborator, {}).permit(:contract_begin, :contract_end)
+    end
+
+    def student_params
+      params.fetch(:student, {}).permit(
+        :admission_date,
+        :departure_date,
+        :departure_reason_id,
+        :repeating_grade
+      )
+    end
+
     def set_person
       @person = Person.find(params[:id])
+    end
+
+    def requested_person_role_type
+      params.fetch(:person, {}).fetch(:role_type, @person.role_type).presence || "none"
     end
 
     def account_requested?
@@ -84,7 +119,12 @@ module Admin
       person_valid = @person.valid?
       account_valid = account_requested? ? invitation_account.valid? : true
       merge_account_errors unless account_valid
-      person_valid && account_valid
+      role_valid = valid_role_form?
+      person_valid && account_valid && role_valid
+    end
+
+    def valid_update_submission?
+      @person.valid? && valid_role_form?
     end
 
     def invitation_account
@@ -106,15 +146,81 @@ module Admin
       end
     end
 
-    def save_person_and_account!
+    def merge_role_errors(resource)
+      resource.errors.full_messages.each do |message|
+        @person.errors.add(:base, message)
+      end
+    end
+
+    def collaborator_attributes_for_assignment
+      collaborator_params.to_h
+    end
+
+    def student_attributes_for_assignment
+      attributes = student_params.to_h
+      attributes["departure_reason_id"] = nil if attributes["departure_reason_id"].blank?
+      attributes["repeating_grade"] = ActiveModel::Type::Boolean.new.cast(attributes.fetch("repeating_grade", "0"))
+      attributes
+    end
+
+    def collaborator_role?
+      @person_role_type == "collaborator"
+    end
+
+    def student_role?
+      @person_role_type == "student"
+    end
+
+    def valid_role_form?
+      if collaborator_role?
+        valid = @collaborator_form.valid?
+        merge_role_errors(@collaborator_form) unless valid
+        valid
+      elsif student_role?
+        valid = @student_form.valid?
+        merge_role_errors(@student_form) unless valid
+        valid
+      else
+        true
+      end
+    end
+
+    def save_person_with_dependencies!
       Person.transaction do
         @person.save!
+        sync_role_records!
 
         if account_requested?
           invitation_account.person = @person
           invitation_account.save!
         end
       end
+    end
+
+    def sync_role_records!
+      case @person_role_type
+      when "collaborator"
+        save_collaborator!
+        @person.student&.destroy!
+      when "student"
+        save_student!
+        @person.collaborator&.destroy!
+      else
+        @person.collaborator&.destroy!
+        @person.student&.destroy!
+      end
+    end
+
+    def save_collaborator!
+      collaborator = @person.collaborator || @person.build_collaborator
+      collaborator.assign_attributes(collaborator_attributes_for_assignment)
+      collaborator.save!
+    end
+
+    def save_student!
+      student = @person.student || @person.build_student
+      student.assign_attributes(student_attributes_for_assignment)
+      student.save!
     end
 
     def redirect_after_create
