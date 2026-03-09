@@ -19,6 +19,10 @@
       <strong><%= @account.email %></strong>
     </div>
     <div class="detail-item">
+      <span class="detail-label">Role</span>
+      <strong><%= @person.role_label %></strong>
+    </div>
+    <div class="detail-item">
       <span class="detail-label">Birth date</span>
       <strong><%= @person.birth_date.present? ? l(@person.birth_date) : "Not provided" %></strong>
     </div>

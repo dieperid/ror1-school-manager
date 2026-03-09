@@ -33,6 +33,10 @@
       <span class="detail-label">Phone number</span>
       <strong><%= @person.phone_number.presence || "Not provided" %></strong>
     </div>
+    <div class="detail-item">
+      <span class="detail-label">Role</span>
+      <strong><%= @person.role_label %></strong>
+    </div>
   </div>
 
   <div class="form-actions">
@@ -44,6 +48,57 @@
                     data: { turbo_confirm: "Delete #{@person.full_name} and any linked account?" } %>
     <% end %>
   </div>
+</section>
+
+<section class="card stack">
+  <div class="page-heading">
+    <div>
+      <h2>Role details</h2>
+      <p>The role data depends on whether this person is registered as a collaborator or a student.</p>
+    </div>
+  </div>
+
+  <% if @person.collaborator.present? %>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">Role type</span>
+        <strong>Collaborator</strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Contract begin</span>
+        <strong><%= @person.collaborator.contract_begin.present? ? l(@person.collaborator.contract_begin) : "Not provided" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Contract end</span>
+        <strong><%= @person.collaborator.contract_end.present? ? l(@person.collaborator.contract_end) : "Not provided" %></strong>
+      </div>
+    </div>
+  <% elsif @person.student.present? %>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">Role type</span>
+        <strong>Student</strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Admission date</span>
+        <strong><%= @person.student.admission_date.present? ? l(@person.student.admission_date) : "Not provided" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Departure date</span>
+        <strong><%= @person.student.departure_date.present? ? l(@person.student.departure_date) : "Not provided" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Departure reason</span>
+        <strong><%= @person.student.departure_reason&.title || "Not provided" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Repeating grade</span>
+        <strong><%= @person.student.repeating_grade? ? "Yes" : "No" %></strong>
+      </div>
+    </div>
+  <% else %>
+    <p>No collaborator or student role is assigned yet.</p>
+  <% end %>
 </section>
 
 <section class="card stack">
