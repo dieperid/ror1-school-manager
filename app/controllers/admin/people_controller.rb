@@ -5,7 +5,7 @@ module Admin
     before_action :prepare_form_dependencies, only: %i[new edit]
 
     def index
-      @people = Person.includes(:account, :collaborator, :student).order(:last_name, :first_name)
+      @people = Person.includes(:account, { collaborator: :collaborator_roles }, :student).order(:last_name, :first_name)
     end
 
     def show
@@ -62,9 +62,12 @@ module Admin
 
     def prepare_form_dependencies(assign_role_attributes: false)
       @departure_reasons = DepartureReason.order(:title)
+      @collaborator_roles = CollaboratorRole.order(:title)
       @person_role_type = requested_person_role_type
       @collaborator_form = @person.collaborator || Collaborator.new(person: @person)
       @student_form = @person.student || Student.new(person: @person, repeating_grade: false)
+      @selected_collaborator_role_ids = selected_collaborator_role_ids
+      @new_collaborator_role_titles = new_collaborator_role_titles
 
       return unless assign_role_attributes
 
@@ -90,8 +93,8 @@ module Admin
       params.fetch(:account, {}).permit(:email, :admin)
     end
 
-    def collaborator_params
-      params.fetch(:collaborator, {}).permit(:contract_begin, :contract_end)
+    def collaborator_form_params
+      params.fetch(:collaborator, {}).permit(:contract_begin, :contract_end, :new_role_titles, collaborator_role_ids: [])
     end
 
     def student_params
@@ -153,7 +156,7 @@ module Admin
     end
 
     def collaborator_attributes_for_assignment
-      collaborator_params.to_h
+      collaborator_form_params.slice(:contract_begin, :contract_end).to_h
     end
 
     def student_attributes_for_assignment
@@ -175,7 +178,7 @@ module Admin
       if collaborator_role?
         valid = @collaborator_form.valid?
         merge_role_errors(@collaborator_form) unless valid
-        valid
+        valid && collaborator_roles_request_valid?
       elsif student_role?
         valid = @student_form.valid?
         merge_role_errors(@student_form) unless valid
@@ -215,12 +218,69 @@ module Admin
       collaborator = @person.collaborator || @person.build_collaborator
       collaborator.assign_attributes(collaborator_attributes_for_assignment)
       collaborator.save!
+      collaborator.collaborator_roles = collaborator_roles_for_assignment
+      @collaborator_form = collaborator
     end
 
     def save_student!
       student = @person.student || @person.build_student
       student.assign_attributes(student_attributes_for_assignment)
       student.save!
+    end
+
+    def selected_collaborator_role_ids
+      ids =
+        if params[:collaborator].present?
+          collaborator_form_params[:collaborator_role_ids]
+        else
+          @person.collaborator&.collaborator_role_ids || []
+        end
+
+      Array(ids).reject(&:blank?).map(&:to_i).uniq
+    end
+
+    def new_collaborator_role_titles
+      return collaborator_form_params[:new_role_titles].to_s if params[:collaborator].present?
+
+      ""
+    end
+
+    def parsed_new_collaborator_role_titles
+      new_collaborator_role_titles.split(/[\n,;]+/).map(&:strip).reject(&:blank?).each_with_object([]) do |title, titles|
+        titles << title unless titles.any? { |existing_title| existing_title.casecmp?(title) }
+      end
+    end
+
+    def collaborator_roles_request_valid?
+      valid = true
+      existing_ids = CollaboratorRole.where(id: selected_collaborator_role_ids).pluck(:id)
+
+      if existing_ids.sort != selected_collaborator_role_ids.sort
+        @person.errors.add(:base, "One or more collaborator roles are invalid")
+        valid = false
+      end
+
+      roles_to_create.each do |role|
+        next if role.valid?
+
+        merge_role_errors(role)
+        valid = false
+      end
+
+      valid
+    end
+
+    def collaborator_roles_for_assignment
+      selected_roles = CollaboratorRole.where(id: selected_collaborator_role_ids).order(:title).to_a
+      selected_roles + roles_to_create.map { |role| CollaboratorRole.find_or_create_by!(title: role.title) }
+    end
+
+    def roles_to_create
+      @roles_to_create ||= parsed_new_collaborator_role_titles.filter_map do |title|
+        next if CollaboratorRole.exists?(title: title)
+
+        CollaboratorRole.new(title: title)
+      end
     end
 
     def redirect_after_create

@@ -1,8 +1,14 @@
 class Collaborator < ApplicationRecord
   belongs_to :person
+  has_many :collaborator_assignments, dependent: :destroy
+  has_many :collaborator_roles, -> { order(:title) }, through: :collaborator_assignments
 
   validates :person_id, uniqueness: true
   validate :contract_dates_are_ordered
+
+  def role_titles
+    collaborator_roles.map(&:title)
+  end
 
   private
 

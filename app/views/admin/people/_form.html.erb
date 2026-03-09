@@ -86,7 +86,37 @@
       </div>
     </div>
 
-    <p class="form-hint">These fields are used only when the collaborator role is selected.</p>
+    <div>
+      <span class="detail-label">Assigned collaborator roles</span>
+
+      <% if collaborator_roles.any? %>
+        <div class="form-grid">
+          <%= hidden_field_tag "collaborator[collaborator_role_ids][]", "", id: nil %>
+
+          <% collaborator_roles.each do |collaborator_role| %>
+            <div class="checkbox-row">
+              <%= check_box_tag "collaborator[collaborator_role_ids][]",
+                                collaborator_role.id,
+                                selected_collaborator_role_ids.include?(collaborator_role.id),
+                                id: "collaborator_role_#{collaborator_role.id}" %>
+              <%= label_tag "collaborator_role_#{collaborator_role.id}", collaborator_role.title %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p>No collaborator roles exist yet. Add one below to create it during save.</p>
+      <% end %>
+    </div>
+
+    <div>
+      <%= label_tag "collaborator_new_role_titles", "New collaborator role titles" %>
+      <%= text_area_tag "collaborator[new_role_titles]",
+                        new_collaborator_role_titles,
+                        rows: 3,
+                        placeholder: "Teacher, Mentor" %>
+    </div>
+
+    <p class="form-hint">These fields are used only when the collaborator role is selected. Choose existing roles or enter new titles separated by commas or new lines.</p>
   </fieldset>
 
   <fieldset class="account-fieldset">

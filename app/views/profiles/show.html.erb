@@ -22,6 +22,12 @@
       <span class="detail-label">Role</span>
       <strong><%= @person.role_label %></strong>
     </div>
+    <% if @person.collaborator.present? %>
+      <div class="detail-item">
+        <span class="detail-label">Collaborator roles</span>
+        <strong><%= @person.collaborator.role_titles.presence&.join(", ") || "No roles assigned" %></strong>
+      </div>
+    <% end %>
     <div class="detail-item">
       <span class="detail-label">Birth date</span>
       <strong><%= @person.birth_date.present? ? l(@person.birth_date) : "Not provided" %></strong>

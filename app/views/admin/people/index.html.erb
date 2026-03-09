@@ -27,7 +27,12 @@
           <% account = person.account %>
           <tr>
             <td><strong><%= person.full_name %></strong></td>
-            <td><%= person.role_label %></td>
+            <td>
+              <div><%= person.role_label %></div>
+              <% if person.collaborator.present? && person.collaborator.role_titles.any? %>
+                <div><%= person.collaborator.role_titles.join(", ") %></div>
+              <% end %>
+            </td>
             <td><%= person.avs_number %></td>
             <td>
               <div><%= [person.street, person.street_number].compact.join(" ") %></div>

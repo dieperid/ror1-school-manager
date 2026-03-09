@@ -72,6 +72,10 @@
         <span class="detail-label">Contract end</span>
         <strong><%= @person.collaborator.contract_end.present? ? l(@person.collaborator.contract_end) : "Not provided" %></strong>
       </div>
+      <div class="detail-item">
+        <span class="detail-label">Collaborator roles</span>
+        <strong><%= @person.collaborator.role_titles.presence&.join(", ") || "No roles assigned" %></strong>
+      </div>
     </div>
   <% elsif @person.student.present? %>
     <div class="detail-grid">
