@@ -3,12 +3,13 @@
 <% if current_account.admin? %>
   <section class="card">
     <h1>Admin dashboard</h1>
-    <p>Create people, attach accounts to them, and send invitation emails.</p>
+    <p>Manage people, linked accounts, and download invitation files for password setup.</p>
     <p><%= link_to "Manage people", admin_people_path, class: "primary-link" %></p>
   </section>
 <% else %>
   <section class="card">
-    <h1>Account active</h1>
-    <p>Your account is available. Additional features can be assigned by an administrator.</p>
+    <h1>My profile</h1>
+    <p>Review your personal information and update your account details.</p>
+    <p><%= link_to "Open my profile", profile_path, class: "primary-link" %></p>
   </section>
 <% end %>

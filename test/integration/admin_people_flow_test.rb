@@ -53,7 +53,7 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
     person = Person.find_by!(avs_number: "756.0000.0000.03")
     account = person.account
 
-    assert_redirected_to invitation_admin_person_path(person, format: :txt)
+    assert_redirected_to admin_person_account_invitation_path(person, format: :txt)
     follow_redirect!
 
     assert_response :success
@@ -71,5 +71,75 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
 
     token = CGI.parse(URI.parse(url).query).fetch("reset_password_token").first
     assert_equal account.id, Account.with_reset_password_token(token).id
+  end
+
+  test "admin can read update and delete a person" do
+    sign_in accounts(:admin)
+    person = people(:member_person)
+
+    get admin_person_path(person)
+    assert_response :success
+    assert_match person.full_name, response.body
+
+    patch admin_person_path(person), params: {
+      person: {
+        city: "Neuchatel",
+        first_name: "Updated"
+      }
+    }
+
+    assert_redirected_to admin_person_path(person)
+    assert_equal "Updated", person.reload.first_name
+    assert_equal "Neuchatel", person.city
+
+    assert_difference("Person.count", -1) do
+      assert_difference("Account.count", -1) do
+        delete admin_person_path(person)
+      end
+    end
+  end
+
+  test "admin can create update and delete an account for an existing person" do
+    sign_in accounts(:admin)
+    person = people(:unlinked_person)
+
+    get new_admin_person_account_path(person)
+    assert_response :success
+
+    assert_difference("Account.count", 1) do
+      post admin_person_account_path(person), params: {
+        account: {
+          email: "pending.person@example.com",
+          admin: "0",
+          enabled: "1"
+        }
+      }
+    end
+
+    account = person.reload.account
+    assert_redirected_to admin_person_account_invitation_path(person, format: :txt)
+    follow_redirect!
+    assert_response :success
+    assert_equal "text/plain", response.media_type
+    assert_equal "pending.person@example.com", account.email
+
+    patch admin_person_account_path(person), params: {
+      account: {
+        email: "pending.admin@example.com",
+        admin: "1",
+        enabled: "1",
+        password: "",
+        password_confirmation: ""
+      }
+    }
+
+    assert_redirected_to admin_person_account_path(person)
+    account.reload
+    assert_equal "pending.admin@example.com", account.email
+    assert account.admin?
+
+    assert_difference("Account.count", -1) do
+      delete admin_person_account_path(person)
+    end
   end
 end

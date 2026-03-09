@@ -23,3 +23,16 @@ member_person:
   phone_number: "0780000000"
   created_at: <%= 4.days.ago %>
   updated_at: <%= 1.day.ago %>
+
+unlinked_person:
+  avs_number: "756.0000.0000.03"
+  first_name: "Pending"
+  last_name: "Person"
+  city: "Fribourg"
+  birth_date: 1998-03-20
+  postal_code: "1700"
+  street: "Station Road"
+  street_number: 4
+  phone_number: "0760000000"
+  created_at: <%= 3.days.ago %>
+  updated_at: <%= 1.day.ago %>

@@ -3,83 +3,16 @@
 <section class="page-heading">
   <div>
     <h1>New person</h1>
-    <p>Leave the email empty if you only want the person record for now.</p>
+    <p>Create a person first, then optionally create the linked account in the same action.</p>
   </div>
   <%= link_to "Back to people", admin_people_path %>
 </section>
 
 <section class="card">
-  <%= render "accounts/shared/error_messages", resource: @person %>
-
-  <%= form_with model: [:admin, @person], data: { turbo: false } do |form| %>
-    <div class="form-grid">
-      <div>
-        <%= form.label :first_name %>
-        <%= form.text_field :first_name, required: true %>
-      </div>
-
-      <div>
-        <%= form.label :last_name %>
-        <%= form.text_field :last_name, required: true %>
-      </div>
-
-      <div>
-        <%= form.label :avs_number %>
-        <%= form.text_field :avs_number, required: true %>
-      </div>
-
-      <div>
-        <%= form.label :birth_date %>
-        <%= form.date_field :birth_date %>
-      </div>
-
-      <div>
-        <%= form.label :street %>
-        <%= form.text_field :street %>
-      </div>
-
-      <div>
-        <%= form.label :street_number %>
-        <%= form.number_field :street_number, min: 1 %>
-      </div>
-
-      <div>
-        <%= form.label :postal_code %>
-        <%= form.text_field :postal_code %>
-      </div>
-
-      <div>
-        <%= form.label :city %>
-        <%= form.text_field :city %>
-      </div>
-
-      <div>
-        <%= form.label :phone_number %>
-        <%= form.telephone_field :phone_number %>
-      </div>
-    </div>
-
-    <fieldset class="account-fieldset">
-      <legend>Optional account</legend>
-
-      <div class="form-grid">
-        <div>
-          <%= label_tag "account_email", "Email" %>
-          <%= email_field_tag "account[email]", @account_email, autocomplete: "email" %>
-        </div>
-
-        <div class="checkbox-row">
-          <%= hidden_field_tag "account[admin]", "0" %>
-          <%= check_box_tag "account[admin]", "1", @account_admin %>
-          <%= label_tag "account_admin", "Grant admin access" %>
-        </div>
-      </div>
-
-      <p class="form-hint">When an email is present, the app creates the linked account and downloads a text file with the username and password setup link.</p>
-    </fieldset>
-
-    <div class="form-actions">
-      <%= form.submit "Create person", class: "primary-button" %>
-    </div>
-  <% end %>
+  <%= render "form",
+             person: @person,
+             show_account_fields: true,
+             account_email: @account_email,
+             account_admin: @account_admin,
+             submit_label: "Create person" %>
 </section>

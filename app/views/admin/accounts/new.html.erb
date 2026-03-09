@@ -1,0 +1,20 @@
+<% content_for :title, "New Account" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Create account for <%= @person.full_name %></h1>
+    <p>The account will be linked directly to this person.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "View person", admin_person_path(@person) %>
+    <%= link_to "Back", admin_people_path %>
+  </div>
+</section>
+
+<section class="card">
+  <%= render "form",
+             person: @person,
+             account: @account,
+             show_password_fields: false,
+             submit_label: "Create account" %>
+</section>

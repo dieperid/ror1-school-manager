@@ -3,7 +3,7 @@
 <section class="page-heading">
   <div>
     <h1>People</h1>
-    <p>Create a person first, then optionally attach an account and download the password setup link as a text file.</p>
+    <p>Create, review, update, and remove people and their linked accounts.</p>
   </div>
   <%= link_to "New person", new_admin_person_path, class: "primary-link" %>
 </section>
@@ -18,6 +18,7 @@
           <th>Contact</th>
           <th>Account</th>
           <th>Invite</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -50,6 +51,19 @@
                 <div><%= link_to "Download invite (.txt)", invitation_admin_person_path(person, format: :txt) %></div>
               <% else %>
                 No invite
+              <% end %>
+            </td>
+            <td>
+              <div><%= link_to "View", admin_person_path(person) %></div>
+              <div><%= link_to "Edit", edit_admin_person_path(person) %></div>
+              <% unless person == current_person %>
+                <div>
+                  <%= button_to "Delete",
+                                admin_person_path(person),
+                                method: :delete,
+                                class: "secondary-button",
+                                data: { turbo_confirm: "Delete #{person.full_name}?" } %>
+                </div>
               <% end %>
             </td>
           </tr>

@@ -1,0 +1,38 @@
+<% content_for :title, "My Profile" %>
+
+<section class="page-heading">
+  <div>
+    <h1>My profile</h1>
+    <p>Review your personal information and account settings.</p>
+  </div>
+  <%= link_to "Edit profile", edit_profile_path, class: "primary-link" %>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label">Full name</span>
+      <strong><%= @person.full_name %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Email</span>
+      <strong><%= @account.email %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Birth date</span>
+      <strong><%= @person.birth_date.present? ? l(@person.birth_date) : "Not provided" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Phone number</span>
+      <strong><%= @person.phone_number.presence || "Not provided" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Address</span>
+      <strong><%= [@person.street, @person.street_number].compact.join(" ").presence || "Not provided" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Postal code and city</span>
+      <strong><%= [@person.postal_code, @person.city].compact.join(" ").presence || "Not provided" %></strong>
+    </div>
+  </div>
+</section>

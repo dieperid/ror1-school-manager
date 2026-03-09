@@ -1,0 +1,93 @@
+<% content_for :title, @person.full_name %>
+
+<section class="page-heading">
+  <div>
+    <h1><%= @person.full_name %></h1>
+    <p>Manage the person record and the linked account from this page.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "Edit person", edit_admin_person_path(@person), class: "primary-link" %>
+    <%= link_to "Back to people", admin_people_path %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label">AVS number</span>
+      <strong><%= @person.avs_number %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Birth date</span>
+      <strong><%= @person.birth_date.present? ? l(@person.birth_date) : "Not provided" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Address</span>
+      <strong><%= [@person.street, @person.street_number].compact.join(" ").presence || "Not provided" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Postal code and city</span>
+      <strong><%= [@person.postal_code, @person.city].compact.join(" ").presence || "Not provided" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Phone number</span>
+      <strong><%= @person.phone_number.presence || "Not provided" %></strong>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <% unless @person == current_person %>
+      <%= button_to "Delete person",
+                    admin_person_path(@person),
+                    method: :delete,
+                    class: "secondary-button",
+                    data: { turbo_confirm: "Delete #{@person.full_name} and any linked account?" } %>
+    <% end %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="page-heading">
+    <div>
+      <h2>Linked account</h2>
+      <p>Create, edit, invite, or remove the account associated with this person.</p>
+    </div>
+  </div>
+
+  <% if @person.account.present? %>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">Email</span>
+        <strong><%= @person.account.email %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Access level</span>
+        <strong><%= @person.account.admin? ? "Admin" : "Standard" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Status</span>
+        <strong><%= @person.account.enabled? ? "Enabled" : "Disabled" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Invitation file</span>
+        <strong><%= @person.account.invited_at.present? ? l(@person.account.invited_at, format: :long) : "Not generated yet" %></strong>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <%= link_to "View account", admin_person_account_path(@person) %>
+      <%= link_to "Edit account", edit_admin_person_account_path(@person) %>
+      <%= link_to "Download invite (.txt)", admin_person_account_invitation_path(@person, format: :txt) %>
+      <% unless @person.account == current_account %>
+        <%= button_to "Delete account",
+                      admin_person_account_path(@person),
+                      method: :delete,
+                      class: "secondary-button",
+                      data: { turbo_confirm: "Delete the linked account for #{@person.full_name}?" } %>
+      <% end %>
+    </div>
+  <% else %>
+    <p>No linked account yet.</p>
+    <p><%= link_to "Create account", new_admin_person_account_path(@person), class: "primary-link" %></p>
+  <% end %>
+</section>

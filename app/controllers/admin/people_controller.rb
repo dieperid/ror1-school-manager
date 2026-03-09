@@ -1,10 +1,13 @@
 module Admin
   class PeopleController < BaseController
     before_action :build_person, only: %i[new create]
-    before_action :set_person, only: :invitation
+    before_action :set_person, only: %i[show edit update destroy]
 
     def index
       @people = Person.includes(:account).order(:last_name, :first_name)
+    end
+
+    def show
     end
 
     def new
@@ -21,22 +24,26 @@ module Admin
       end
     end
 
-    def invitation
-      account = @person.account
+    def edit
+    end
 
-      if account.blank?
-        redirect_to admin_people_path, alert: "This person does not have a linked account."
+    def update
+      if @person.update(person_params)
+        redirect_to admin_person_path(@person), notice: "#{@person.full_name} was updated."
+      else
+        render :edit, status: :unprocessable_entity
+      end
+    end
+
+    def destroy
+      if @person == current_person
+        redirect_to admin_person_path(@person), alert: "You cannot delete your own person record while signed in."
         return
       end
 
-      token = account.generate_password_setup_token!
-
-      send_data(
-        invitation_contents(account, token),
-        filename: invitation_filename,
-        type: "text/plain; charset=utf-8",
-        disposition: "attachment"
-      )
+      deleted_name = @person.full_name
+      @person.destroy!
+      redirect_to admin_people_path, notice: "#{deleted_name} was deleted."
     end
 
     private
@@ -112,33 +119,14 @@ module Admin
 
     def redirect_after_create
       if account_requested?
-        redirect_to invitation_admin_person_path(@person, format: :txt)
+        redirect_to admin_person_account_invitation_path(@person, format: :txt)
       else
-        redirect_to admin_people_path, notice: success_message
+        redirect_to admin_person_path(@person), notice: success_message
       end
     end
 
     def success_message
-      message = "#{@person.full_name} was created."
-      return message unless account_requested?
-
-      "#{message} The invitation file is ready for download."
-    end
-
-    def invitation_contents(account, token)
-      <<~TEXT
-        Ror1 School Manager account invitation
-
-        Name: #{@person.full_name}
-        Username: #{account.email}
-
-        Set password link:
-        #{edit_account_password_url(reset_password_token: token)}
-      TEXT
-    end
-
-    def invitation_filename
-      "#{@person.full_name.parameterize.presence || "person"}-invitation.txt"
+      "#{@person.full_name} was created."
     end
   end
 end

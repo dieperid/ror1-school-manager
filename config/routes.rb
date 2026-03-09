@@ -12,12 +12,17 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :profile, only: %i[show edit update], controller: "profiles"
+
   namespace :admin do
-    resources :people, only: %i[index new create] do
-      member do
-        get :invitation, defaults: { format: :txt }
-      end
+    resources :people do
+      resource :account, controller: "accounts"
     end
+
+    get "people/:person_id/account/invitation",
+        to: "accounts#invitation",
+        as: :person_account_invitation,
+        defaults: { format: :txt }
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

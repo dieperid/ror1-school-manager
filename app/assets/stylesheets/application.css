@@ -103,6 +103,7 @@ button,
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .topbar-actions form {
@@ -179,7 +180,35 @@ button,
 }
 
 .form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   margin-top: 1.5rem;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.detail-item {
+  padding: 1rem;
+  border: 1px solid rgba(31, 41, 51, 0.08);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.detail-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.stack {
+  display: grid;
+  gap: 1rem;
 }
 
 .people-table {

@@ -29,4 +29,8 @@ class Account < ApplicationRecord
     update!(invited_at: Time.current)
     token
   end
+
+  def person_name
+    person.full_name
+  end
 end

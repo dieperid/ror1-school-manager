@@ -9,15 +9,15 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal :disabled, account.inactive_message
   end
 
-  test "deliver_invitation stamps the account and sends email" do
+  test "generate_password_setup_token stamps the account and stores a recoverable token" do
     account = accounts(:member)
 
-    assert_difference("ActionMailer::Base.deliveries.size", 1) do
-      account.deliver_invitation!
-    end
+    token = account.generate_password_setup_token!
 
     account.reload
+    assert_not_nil token
     assert_not_nil account.invited_at
     assert_not_nil account.reset_password_token
+    assert_equal account.id, Account.with_reset_password_token(token).id
   end
 end
