@@ -1,0 +1,9 @@
+graduated:
+  title: "Graduated"
+  created_at: <%= 5.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+left_school:
+  title: "Left school"
+  created_at: <%= 5.days.ago %>
+  updated_at: <%= 1.day.ago %>

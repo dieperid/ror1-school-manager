@@ -1,0 +1,6 @@
+admin_collaborator:
+  person: admin_person
+  contract_begin: 2020-08-01
+  contract_end:
+  created_at: <%= 5.days.ago %>
+  updated_at: <%= 1.day.ago %>

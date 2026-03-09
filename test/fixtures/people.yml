@@ -25,7 +25,7 @@ member_person:
   updated_at: <%= 1.day.ago %>
 
 unlinked_person:
-  avs_number: "756.0000.0000.03"
+  avs_number: "756.0000.0000.04"
   first_name: "Pending"
   last_name: "Person"
   city: "Fribourg"

@@ -7,6 +7,7 @@ class ProfileFlowTest < ActionDispatch::IntegrationTest
     get profile_path
     assert_response :success
     assert_match "My profile", response.body
+    assert_match "Student", response.body
 
     patch profile_path, params: {
       person: {

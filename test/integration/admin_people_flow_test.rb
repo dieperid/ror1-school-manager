@@ -31,9 +31,10 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
 
     assert_difference("Person.count", 1) do
       assert_difference("Account.count", 1) do
+        assert_difference("Collaborator.count", 1) do
         post admin_people_path, params: {
           person: {
-            avs_number: "756.0000.0000.03",
+            avs_number: "756.0000.0000.99",
             first_name: "Jane",
             last_name: "Doe",
             birth_date: "2001-04-15",
@@ -41,16 +42,22 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
             postal_code: "1400",
             street: "Rue du Lac",
             street_number: "11",
-            phone_number: "0770000000"
+            phone_number: "0770000000",
+            role_type: "collaborator"
+          },
+          collaborator: {
+            contract_begin: "2026-08-01",
+            contract_end: ""
           },
           account: {
             email: "jane.doe@example.com"
           }
         }
+        end
       end
     end
 
-    person = Person.find_by!(avs_number: "756.0000.0000.03")
+    person = Person.find_by!(avs_number: "756.0000.0000.99")
     account = person.account
 
     assert_redirected_to admin_person_account_invitation_path(person, format: :txt)
@@ -65,6 +72,9 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
     assert_not account.admin?
     assert_not_nil account.invited_at
     assert_not_nil account.reset_password_token
+    assert_equal "collaborator", person.role_type
+    assert_equal Date.new(2026, 8, 1), person.collaborator.contract_begin
+    assert_nil person.student
 
     url = response.body.lines.find { |line| line.start_with?("http") }&.strip
     assert_not_nil url
@@ -141,5 +151,33 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
     assert_difference("Account.count", -1) do
       delete admin_person_account_path(person)
     end
+  end
+
+  test "admin can switch a person from student to collaborator" do
+    sign_in accounts(:admin)
+    person = people(:member_person)
+
+    assert_equal "student", person.role_type
+
+    assert_difference("Collaborator.count", 1) do
+      assert_difference("Student.count", -1) do
+        patch admin_person_path(person), params: {
+          person: {
+            role_type: "collaborator",
+            city: "Neuchatel"
+          },
+          collaborator: {
+            contract_begin: "2026-01-01",
+            contract_end: ""
+          }
+        }
+      end
+    end
+
+    assert_redirected_to admin_person_path(person)
+    person.reload
+    assert_equal "collaborator", person.role_type
+    assert_equal Date.new(2026, 1, 1), person.collaborator.contract_begin
+    assert_nil person.student
   end
 end
