@@ -24,6 +24,7 @@ Rails.application.routes.draw do
     resources :units
     resources :rooms
     resources :lectures
+    resources :grades
 
     get "people/:person_id/account/invitation",
         to: "accounts#invitation",
