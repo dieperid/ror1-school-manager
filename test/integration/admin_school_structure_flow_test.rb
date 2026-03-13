@@ -56,18 +56,22 @@ class AdminSchoolStructureFlowTest < ActionDispatch::IntegrationTest
     get admin_school_classes_path
     assert_response :success
     assert_match school_classes(:webdev_class).name, response.body
+    assert_match "1 student", response.body
 
     get new_admin_school_class_path
     assert_response :success
 
     assert_difference("SchoolClass.count", 1) do
-      post admin_school_classes_path, params: {
-        school_class: {
-          name: "INF-2026-A",
-          formation_plan_id: formation_plans(:informatics_plan).id,
-          responsible_collaborator_id: collaborators(:admin_collaborator).id
+      assert_difference("ClassEnrollment.count", 1) do
+        post admin_school_classes_path, params: {
+          school_class: {
+            name: "INF-2026-A",
+            formation_plan_id: formation_plans(:informatics_plan).id,
+            responsible_collaborator_id: collaborators(:admin_collaborator).id,
+            student_ids: [students(:member_student).id]
+          }
         }
-      }
+      end
     end
 
     school_class = SchoolClass.find_by!(name: "INF-2026-A")
@@ -78,19 +82,24 @@ class AdminSchoolStructureFlowTest < ActionDispatch::IntegrationTest
     assert_match "INF-2026-A", response.body
     assert_match "Informatics", response.body
     assert_match "System Administrator", response.body
+    assert_match "Regular Member", response.body
 
-    patch admin_school_class_path(school_class), params: {
-      school_class: {
-        name: "BIZ-2026-B",
-        formation_plan_id: formation_plans(:business_plan).id,
-        responsible_collaborator_id: collaborators(:admin_collaborator).id
+    assert_difference("ClassEnrollment.count", -1) do
+      patch admin_school_class_path(school_class), params: {
+        school_class: {
+          name: "BIZ-2026-B",
+          formation_plan_id: formation_plans(:business_plan).id,
+          responsible_collaborator_id: collaborators(:admin_collaborator).id,
+          student_ids: []
+        }
       }
-    }
+    end
 
     assert_redirected_to admin_school_class_path(school_class)
     school_class.reload
     assert_equal "BIZ-2026-B", school_class.name
     assert_equal formation_plans(:business_plan), school_class.formation_plan
+    assert_empty school_class.students
 
     assert_difference("SchoolClass.count", -1) do
       delete admin_school_class_path(school_class)
