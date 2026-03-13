@@ -21,10 +21,11 @@ Rails.application.routes.draw do
     resources :formation_plans
     resources :school_classes
     resources :learning_modules
-    resources :units
+    resources :units do
+      resources :grades, except: :index
+    end
     resources :rooms
     resources :lectures
-    resources :grades
 
     get "people/:person_id/account/invitation",
         to: "accounts#invitation",
