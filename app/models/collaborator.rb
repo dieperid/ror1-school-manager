@@ -6,6 +6,7 @@ class Collaborator < ApplicationRecord
            class_name: "SchoolClass",
            foreign_key: :responsible_collaborator_id,
            inverse_of: :responsible_collaborator
+  has_many :lectures, dependent: :restrict_with_exception
 
   validates :person_id, uniqueness: true
   validate :contract_dates_are_ordered

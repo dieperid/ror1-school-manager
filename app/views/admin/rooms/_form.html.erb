@@ -1,0 +1,14 @@
+<%= render "accounts/shared/error_messages", resource: room %>
+
+<%= form_with model: [:admin, room] do |form| %>
+  <div class="form-grid">
+    <div>
+      <%= form.label :name %>
+      <%= form.text_field :name, required: true %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit submit_label, class: "primary-button" %>
+  </div>
+<% end %>

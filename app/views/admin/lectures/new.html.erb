@@ -1,0 +1,18 @@
+<% content_for :title, "New Lecture" %>
+
+<section class="page-heading">
+  <div>
+    <h1>New lecture</h1>
+    <p>Schedule a lecture by selecting the room, unit, collaborator, date, and time range.</p>
+  </div>
+  <%= link_to "Back to lectures", admin_lectures_path %>
+</section>
+
+<section class="card">
+  <%= render "form",
+             lecture: @lecture,
+             rooms: @rooms,
+             units: @units,
+             collaborators: @collaborators,
+             submit_label: "Create lecture" %>
+</section>

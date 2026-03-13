@@ -1,0 +1,73 @@
+<% content_for :title, @room.name %>
+
+<section class="page-heading">
+  <div>
+    <h1><%= @room.name %></h1>
+    <p>Review the room and the lectures scheduled in it.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "Edit room", edit_admin_room_path(@room), class: "primary-link" %>
+    <%= link_to "Back to rooms", admin_rooms_path %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label">Name</span>
+      <strong><%= @room.name %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Scheduled lectures</span>
+      <strong><%= pluralize(@lectures.size, "lecture") %></strong>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= link_to "New lecture", new_admin_lecture_path(room_id: @room.id), class: "primary-link" %>
+    <%= button_to "Delete room",
+                  admin_room_path(@room),
+                  method: :delete,
+                  class: "secondary-button",
+                  data: { turbo_confirm: "Delete #{@room.name}?" } %>
+  </div>
+</section>
+
+<section class="card">
+  <div class="page-heading">
+    <div>
+      <h2>Lectures</h2>
+      <p>Lectures currently scheduled in this room.</p>
+    </div>
+  </div>
+
+  <% if @lectures.any? %>
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Unit</th>
+          <th>Collaborator</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @lectures.each do |lecture| %>
+          <tr>
+            <td><%= l(lecture.date) %></td>
+            <td><%= "#{lecture.start_time.strftime('%H:%M')} - #{lecture.end_time.strftime('%H:%M')}" %></td>
+            <td><%= lecture.unit.name %></td>
+            <td><%= lecture.collaborator.full_name %></td>
+            <td>
+              <div><%= link_to "View", admin_lecture_path(lecture) %></div>
+              <div><%= link_to "Edit", edit_admin_lecture_path(lecture) %></div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No lectures are scheduled in this room yet.</p>
+  <% end %>
+</section>

@@ -1,0 +1,47 @@
+<% content_for :title, "Rooms" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Rooms</h1>
+    <p>Manage the available rooms used when scheduling lectures.</p>
+  </div>
+  <%= link_to "New room", new_admin_room_path, class: "primary-link" %>
+</section>
+
+<% if @rooms.any? %>
+  <div class="card">
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Lectures</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @rooms.each do |room| %>
+          <tr>
+            <td><strong><%= room.name %></strong></td>
+            <td><%= pluralize(room.lecture_count, "lecture") %></td>
+            <td>
+              <div><%= link_to "View", admin_room_path(room) %></div>
+              <div><%= link_to "Edit", edit_admin_room_path(room) %></div>
+              <div>
+                <%= button_to "Delete",
+                              admin_room_path(room),
+                              method: :delete,
+                              class: "secondary-button",
+                              data: { turbo_confirm: "Delete #{room.name}?" } %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <section class="card">
+    <h2>No rooms yet</h2>
+    <p>Create a room before planning lectures.</p>
+  </section>
+<% end %>

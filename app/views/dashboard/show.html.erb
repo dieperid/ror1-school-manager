@@ -38,6 +38,18 @@
       <p>Create reusable units and attach them to one or more learning modules.</p>
       <p><%= link_to "Manage units", admin_units_path, class: "primary-link" %></p>
     </article>
+
+    <article class="card">
+      <h2>Rooms</h2>
+      <p>Create rooms that can be used when planning lectures.</p>
+      <p><%= link_to "Manage rooms", admin_rooms_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>Lectures</h2>
+      <p>Schedule lectures by selecting a room, collaborator, unit, date, and time range.</p>
+      <p><%= link_to "Manage lectures", admin_lectures_path, class: "primary-link" %></p>
+    </article>
   </section>
 <% else %>
   <section class="card">

@@ -1,0 +1,16 @@
+<% content_for :title, "Edit Room" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Edit room</h1>
+    <p>Update the room name.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "View room", admin_room_path(@room) %>
+    <%= link_to "Back to rooms", admin_rooms_path %>
+  </div>
+</section>
+
+<section class="card">
+  <%= render "form", room: @room, submit_label: "Save changes" %>
+</section>

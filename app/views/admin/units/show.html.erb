@@ -21,15 +21,56 @@
       <span class="detail-label">Learning modules</span>
       <strong><%= @learning_modules.map(&:name).presence&.join(", ") || "None" %></strong>
     </div>
+    <div class="detail-item">
+      <span class="detail-label">Lectures</span>
+      <strong><%= pluralize(@lectures.size, "lecture") %></strong>
+    </div>
   </div>
 
   <div class="form-actions">
+    <%= link_to "New lecture", new_admin_lecture_path(unit_id: @unit.id), class: "primary-link" %>
     <%= button_to "Delete unit",
                   admin_unit_path(@unit),
                   method: :delete,
                   class: "secondary-button",
                   data: { turbo_confirm: "Delete #{@unit.name}?" } %>
   </div>
+</section>
+
+<section class="card">
+  <div class="page-heading">
+    <div>
+      <h2>Lectures</h2>
+      <p>Lectures currently linked to this unit.</p>
+    </div>
+  </div>
+
+  <% if @lectures.any? %>
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Room</th>
+          <th>Collaborator</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @lectures.each do |lecture| %>
+          <tr>
+            <td><%= l(lecture.date) %></td>
+            <td><%= "#{lecture.start_time.strftime('%H:%M')} - #{lecture.end_time.strftime('%H:%M')}" %></td>
+            <td><%= lecture.room.name %></td>
+            <td><%= lecture.collaborator.full_name %></td>
+            <td><%= link_to "View", admin_lecture_path(lecture) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No lectures are linked to this unit yet.</p>
+  <% end %>
 </section>
 
 <section class="card">

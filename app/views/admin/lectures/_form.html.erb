@@ -1,0 +1,39 @@
+<%= render "accounts/shared/error_messages", resource: lecture %>
+
+<%= form_with model: [:admin, lecture] do |form| %>
+  <div class="form-grid">
+    <div>
+      <%= form.label :date %>
+      <%= form.date_field :date, required: true %>
+    </div>
+
+    <div>
+      <%= form.label :start_time %>
+      <%= form.time_field :start_time, required: true %>
+    </div>
+
+    <div>
+      <%= form.label :end_time %>
+      <%= form.time_field :end_time, required: true %>
+    </div>
+
+    <div>
+      <%= form.label :room_id, "Room" %>
+      <%= form.collection_select :room_id, rooms, :id, :name, {}, { required: true } %>
+    </div>
+
+    <div>
+      <%= form.label :unit_id, "Unit" %>
+      <%= form.collection_select :unit_id, units, :id, :name, {}, { required: true } %>
+    </div>
+
+    <div>
+      <%= form.label :collaborator_id, "Collaborator" %>
+      <%= form.collection_select :collaborator_id, collaborators, :id, :display_name, {}, { required: true } %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit submit_label, class: "primary-button" %>
+  </div>
+<% end %>

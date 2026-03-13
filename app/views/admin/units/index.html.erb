@@ -15,6 +15,7 @@
         <tr>
           <th>Name</th>
           <th>Modules</th>
+          <th>Lectures</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -23,6 +24,7 @@
           <tr>
             <td><strong><%= unit.name %></strong></td>
             <td><%= unit.learning_modules.map(&:name).presence&.join(", ") || "None" %></td>
+            <td><%= pluralize(unit.lecture_count, "lecture") %></td>
             <td>
               <div><%= link_to "View", admin_unit_path(unit) %></div>
               <div><%= link_to "Edit", edit_admin_unit_path(unit) %></div>

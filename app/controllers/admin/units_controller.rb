@@ -3,11 +3,12 @@ module Admin
     before_action :set_unit, only: %i[show edit update destroy]
 
     def index
-      @units = Unit.includes(:learning_modules).order(:name)
+      @units = Unit.includes(:learning_modules, :lectures).order(:name)
     end
 
     def show
       @learning_modules = @unit.learning_modules.order(:name)
+      @lectures = @unit.lectures.includes(:room, collaborator: :person).order(:date, :start_time)
     end
 
     def new
@@ -38,12 +39,14 @@ module Admin
     def destroy
       @unit.destroy!
       redirect_to admin_units_path, notice: "Unit deleted."
+    rescue ActiveRecord::DeleteRestrictionError, ActiveRecord::InvalidForeignKey
+      redirect_to admin_unit_path(@unit), alert: "Delete the lectures linked to this unit first."
     end
 
     private
 
     def set_unit
-      @unit = Unit.includes(:learning_modules).find(params[:id])
+      @unit = Unit.includes(:learning_modules, :lectures).find(params[:id])
     end
 
     def unit_params

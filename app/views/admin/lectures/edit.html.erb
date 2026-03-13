@@ -1,0 +1,21 @@
+<% content_for :title, "Edit Lecture" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Edit lecture</h1>
+    <p>Update the lecture scheduling details.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "View lecture", admin_lecture_path(@lecture) %>
+    <%= link_to "Back to lectures", admin_lectures_path %>
+  </div>
+</section>
+
+<section class="card">
+  <%= render "form",
+             lecture: @lecture,
+             rooms: @rooms,
+             units: @units,
+             collaborators: @collaborators,
+             submit_label: "Save changes" %>
+</section>
