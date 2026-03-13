@@ -2,12 +2,24 @@ class Collaborator < ApplicationRecord
   belongs_to :person
   has_many :collaborator_assignments, dependent: :destroy
   has_many :collaborator_roles, -> { order(:title) }, through: :collaborator_assignments
+  has_many :responsible_school_classes,
+           class_name: "SchoolClass",
+           foreign_key: :responsible_collaborator_id,
+           inverse_of: :responsible_collaborator
 
   validates :person_id, uniqueness: true
   validate :contract_dates_are_ordered
 
+  delegate :full_name, to: :person
+
   def role_titles
     collaborator_roles.map(&:title)
+  end
+
+  def display_name
+    return full_name if role_titles.empty?
+
+    "#{full_name} (#{role_titles.join(', ')})"
   end
 
   private
