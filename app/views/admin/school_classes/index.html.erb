@@ -16,6 +16,7 @@
           <th>Name</th>
           <th>Formation plan</th>
           <th>Responsible collaborator</th>
+          <th>Students</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -25,6 +26,7 @@
             <td><strong><%= school_class.name %></strong></td>
             <td><%= school_class.formation_plan.name %></td>
             <td><%= school_class.responsible_name %></td>
+            <td><%= pluralize(school_class.student_count, "student") %></td>
             <td>
               <div><%= link_to "View", admin_school_class_path(school_class) %></div>
               <div><%= link_to "Edit", edit_admin_school_class_path(school_class) %></div>

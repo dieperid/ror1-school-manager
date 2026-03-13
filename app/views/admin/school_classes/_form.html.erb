@@ -23,6 +23,30 @@
     </div>
   </div>
 
+  <fieldset class="account-fieldset">
+    <legend>Student enrollments</legend>
+
+    <% if students.any? %>
+      <div class="form-grid">
+        <%= hidden_field_tag "school_class[student_ids][]", "", id: nil %>
+
+        <% students.each do |student| %>
+          <div class="checkbox-row">
+            <%= check_box_tag "school_class[student_ids][]",
+                              student.id,
+                              selected_student_ids.include?(student.id),
+                              id: "school_class_student_#{student.id}" %>
+            <%= label_tag "school_class_student_#{student.id}", student.full_name %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p>No students exist yet. You can create the class now and enroll students later.</p>
+    <% end %>
+
+    <p class="form-hint">Students belong to a class through the enrollment table, so this selection manages the class enrollments.</p>
+  </fieldset>
+
   <div class="form-actions">
     <%= form.submit submit_label, class: "primary-button" %>
   </div>

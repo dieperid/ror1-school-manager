@@ -103,6 +103,10 @@
         <span class="detail-label">Grades</span>
         <strong><%= pluralize(@person.student.grades.size, "grade") %></strong>
       </div>
+      <div class="detail-item">
+        <span class="detail-label">School classes</span>
+        <strong><%= @person.student.school_class_names.presence&.join(", ") || "No class enrollment" %></strong>
+      </div>
     </div>
   <% else %>
     <p>No collaborator or student role is assigned yet.</p>
