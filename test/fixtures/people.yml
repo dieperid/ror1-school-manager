@@ -36,3 +36,29 @@ unlinked_person:
   phone_number: "0760000000"
   created_at: <%= 3.days.ago %>
   updated_at: <%= 1.day.ago %>
+
+teacher_person:
+  avs_number: "756.0000.0000.05"
+  first_name: "Taylor"
+  last_name: "Teacher"
+  city: "Sion"
+  birth_date: 1988-09-12
+  postal_code: "1950"
+  street: "Campus Way"
+  street_number: 3
+  phone_number: "0771111111"
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+outsider_person:
+  avs_number: "756.0000.0000.06"
+  first_name: "Olivia"
+  last_name: "Outside"
+  city: "Montreux"
+  birth_date: 1987-02-08
+  postal_code: "1820"
+  street: "Harbor Lane"
+  street_number: 12
+  phone_number: "0772222222"
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>

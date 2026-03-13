@@ -4,3 +4,17 @@ admin_collaborator:
   contract_end:
   created_at: <%= 5.days.ago %>
   updated_at: <%= 1.day.ago %>
+
+teacher_collaborator:
+  person: teacher_person
+  contract_begin: 2021-08-01
+  contract_end:
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+outsider_collaborator:
+  person: outsider_person
+  contract_begin: 2022-08-01
+  contract_end:
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
