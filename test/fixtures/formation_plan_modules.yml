@@ -1,0 +1,11 @@
+informatics_has_web_module:
+  formation_plan: informatics_plan
+  learning_module: web_fundamentals_module
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+business_has_process_module:
+  formation_plan: business_plan
+  learning_module: business_process_module
+  created_at: <%= 3.days.ago %>
+  updated_at: <%= 1.day.ago %>

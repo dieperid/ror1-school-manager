@@ -1,0 +1,11 @@
+web_module_html:
+  learning_module: web_fundamentals_module
+  unit: html_unit
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+business_module_accounting:
+  learning_module: business_process_module
+  unit: accounting_unit
+  created_at: <%= 3.days.ago %>
+  updated_at: <%= 1.day.ago %>
