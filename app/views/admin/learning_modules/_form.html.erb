@@ -1,0 +1,58 @@
+<%= render "accounts/shared/error_messages", resource: learning_module %>
+
+<%= form_with model: [:admin, learning_module] do |form| %>
+  <div class="form-grid">
+    <div>
+      <%= form.label :name %>
+      <%= form.text_field :name, required: true %>
+    </div>
+  </div>
+
+  <fieldset class="account-fieldset">
+    <legend>Formation plans</legend>
+
+    <% if formation_plans.any? %>
+      <div class="form-grid">
+        <%= hidden_field_tag "learning_module[formation_plan_ids][]", "", id: nil %>
+
+        <% formation_plans.each do |formation_plan| %>
+          <div class="checkbox-row">
+            <%= check_box_tag "learning_module[formation_plan_ids][]",
+                              formation_plan.id,
+                              selected_formation_plan_ids.include?(formation_plan.id),
+                              id: "learning_module_formation_plan_#{formation_plan.id}" %>
+            <%= label_tag "learning_module_formation_plan_#{formation_plan.id}", formation_plan.name %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p>No formation plans exist yet.</p>
+    <% end %>
+  </fieldset>
+
+  <fieldset class="account-fieldset">
+    <legend>Units</legend>
+
+    <% if units.any? %>
+      <div class="form-grid">
+        <%= hidden_field_tag "learning_module[unit_ids][]", "", id: nil %>
+
+        <% units.each do |unit| %>
+          <div class="checkbox-row">
+            <%= check_box_tag "learning_module[unit_ids][]",
+                              unit.id,
+                              selected_unit_ids.include?(unit.id),
+                              id: "learning_module_unit_#{unit.id}" %>
+            <%= label_tag "learning_module_unit_#{unit.id}", unit.name %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p>No units exist yet. Create units first or save the module and assign them later.</p>
+    <% end %>
+  </fieldset>
+
+  <div class="form-actions">
+    <%= form.submit submit_label, class: "primary-button" %>
+  </div>
+<% end %>

@@ -1,0 +1,67 @@
+<% content_for :title, @learning_module.name %>
+
+<section class="page-heading">
+  <div>
+    <h1><%= @learning_module.name %></h1>
+    <p>Review the module and the formation plans and units linked to it.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "Edit learning module", edit_admin_learning_module_path(@learning_module), class: "primary-link" %>
+    <%= link_to "Back to learning modules", admin_learning_modules_path %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label">Name</span>
+      <strong><%= @learning_module.name %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Formation plans</span>
+      <strong><%= @learning_module.formation_plans.map(&:name).presence&.join(", ") || "None" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Units</span>
+      <strong><%= @learning_module.units.map(&:name).presence&.join(", ") || "None" %></strong>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= button_to "Delete learning module",
+                  admin_learning_module_path(@learning_module),
+                  method: :delete,
+                  class: "secondary-button",
+                  data: { turbo_confirm: "Delete #{@learning_module.name}?" } %>
+  </div>
+</section>
+
+<section class="card">
+  <div class="page-heading">
+    <div>
+      <h2>Units</h2>
+      <p>Units currently linked to this module.</p>
+    </div>
+  </div>
+
+  <% if @learning_module.units.any? %>
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @learning_module.units.each do |unit| %>
+          <tr>
+            <td><strong><%= unit.name %></strong></td>
+            <td><%= link_to "View", admin_unit_path(unit) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No units are linked to this learning module yet.</p>
+  <% end %>
+</section>

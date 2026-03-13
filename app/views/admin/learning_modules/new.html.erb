@@ -1,0 +1,19 @@
+<% content_for :title, "New Learning Module" %>
+
+<section class="page-heading">
+  <div>
+    <h1>New learning module</h1>
+    <p>Create a module and optionally attach it to formation plans and units.</p>
+  </div>
+  <%= link_to "Back to learning modules", admin_learning_modules_path %>
+</section>
+
+<section class="card">
+  <%= render "form",
+             learning_module: @learning_module,
+             formation_plans: @formation_plans,
+             units: @units,
+             selected_formation_plan_ids: @selected_formation_plan_ids,
+             selected_unit_ids: @selected_unit_ids,
+             submit_label: "Create learning module" %>
+</section>

@@ -1,0 +1,49 @@
+<% content_for :title, "Learning Modules" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Learning modules</h1>
+    <p>Manage modules and link them to formation plans and units.</p>
+  </div>
+  <%= link_to "New learning module", new_admin_learning_module_path, class: "primary-link" %>
+</section>
+
+<% if @learning_modules.any? %>
+  <div class="card">
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Formation plans</th>
+          <th>Units</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @learning_modules.each do |learning_module| %>
+          <tr>
+            <td><strong><%= learning_module.name %></strong></td>
+            <td><%= learning_module.formation_plans.map(&:name).presence&.join(", ") || "None" %></td>
+            <td><%= learning_module.units.map(&:name).presence&.join(", ") || "None" %></td>
+            <td>
+              <div><%= link_to "View", admin_learning_module_path(learning_module) %></div>
+              <div><%= link_to "Edit", edit_admin_learning_module_path(learning_module) %></div>
+              <div>
+                <%= button_to "Delete",
+                              admin_learning_module_path(learning_module),
+                              method: :delete,
+                              class: "secondary-button",
+                              data: { turbo_confirm: "Delete #{learning_module.name}?" } %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <section class="card">
+    <h2>No learning modules yet</h2>
+    <p>Create a module, then attach it to formation plans and units.</p>
+  </section>
+<% end %>

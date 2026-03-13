@@ -3,11 +3,12 @@ module Admin
     before_action :set_formation_plan, only: %i[show edit update destroy]
 
     def index
-      @formation_plans = FormationPlan.includes(:school_classes).order(:name)
+      @formation_plans = FormationPlan.includes(:school_classes, :learning_modules).order(:name)
     end
 
     def show
       @school_classes = @formation_plan.school_classes.includes(responsible_collaborator: [ :person, :collaborator_roles ]).order(:name)
+      @learning_modules = @formation_plan.learning_modules.includes(:units).order(:name)
     end
 
     def new

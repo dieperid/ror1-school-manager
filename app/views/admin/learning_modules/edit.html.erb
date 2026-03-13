@@ -1,0 +1,22 @@
+<% content_for :title, "Edit Learning Module" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Edit learning module</h1>
+    <p>Update the module name and its linked formation plans and units.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "View learning module", admin_learning_module_path(@learning_module) %>
+    <%= link_to "Back to learning modules", admin_learning_modules_path %>
+  </div>
+</section>
+
+<section class="card">
+  <%= render "form",
+             learning_module: @learning_module,
+             formation_plans: @formation_plans,
+             units: @units,
+             selected_formation_plan_ids: @selected_formation_plan_ids,
+             selected_unit_ids: @selected_unit_ids,
+             submit_label: "Save changes" %>
+</section>
