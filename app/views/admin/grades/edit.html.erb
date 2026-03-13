@@ -1,0 +1,16 @@
+<% content_for :title, "Edit Grade" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Edit grade</h1>
+    <p>Update the student, unit, date, or grade value.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "View grade", admin_grade_path(@grade) %>
+    <%= link_to "Back to grades", admin_grades_path %>
+  </div>
+</section>
+
+<section class="card">
+  <%= render "form", grade: @grade, students: @students, units: @units, submit_label: "Save changes" %>
+</section>

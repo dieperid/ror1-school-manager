@@ -9,6 +9,7 @@ module Admin
     def show
       @learning_modules = @unit.learning_modules.order(:name)
       @lectures = @unit.lectures.includes(:room, collaborator: :person).order(:date, :start_time)
+      @grades = @unit.grades.includes(student: :person).order(awarded_on: :desc, created_at: :desc)
     end
 
     def new
@@ -46,7 +47,7 @@ module Admin
     private
 
     def set_unit
-      @unit = Unit.includes(:learning_modules, :lectures).find(params[:id])
+      @unit = Unit.includes(:learning_modules, :lectures, grades: { student: :person }).find(params[:id])
     end
 
     def unit_params

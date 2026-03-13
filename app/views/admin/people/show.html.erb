@@ -99,11 +99,55 @@
         <span class="detail-label">Repeating grade</span>
         <strong><%= @person.student.repeating_grade? ? "Yes" : "No" %></strong>
       </div>
+      <div class="detail-item">
+        <span class="detail-label">Grades</span>
+        <strong><%= pluralize(@person.student.grades.size, "grade") %></strong>
+      </div>
     </div>
   <% else %>
     <p>No collaborator or student role is assigned yet.</p>
   <% end %>
 </section>
+
+<% if @person.student.present? %>
+  <section class="card">
+    <div class="page-heading">
+      <div>
+        <h2>Grades</h2>
+        <p>Grades recorded for this student.</p>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <%= link_to "New grade", new_admin_grade_path(student_id: @person.student.id), class: "primary-link" %>
+    </div>
+
+    <% if @person.student.grades.any? %>
+      <table class="people-table">
+        <thead>
+          <tr>
+            <th>Unit</th>
+            <th>Awarded on</th>
+            <th>Value</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @person.student.grades.includes(:unit).order(awarded_on: :desc, created_at: :desc).each do |grade| %>
+            <tr>
+              <td><%= grade.unit.name %></td>
+              <td><%= l(grade.awarded_on) %></td>
+              <td><strong><%= grade.value %></strong></td>
+              <td><%= link_to "View", admin_grade_path(grade) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No grades recorded for this student yet.</p>
+    <% end %>
+  </section>
+<% end %>
 
 <section class="card stack">
   <div class="page-heading">
