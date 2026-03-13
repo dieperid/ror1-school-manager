@@ -30,6 +30,8 @@
       <nav class="topbar-actions">
         <% if current_account.admin? %>
           <%= link_to "People", admin_people_path %>
+          <%= link_to "Formation plans", admin_formation_plans_path %>
+          <%= link_to "School classes", admin_school_classes_path %>
         <% end %>
         <%= link_to "My profile", profile_path %>
         <span>Hello <%= current_person.full_name %></span>

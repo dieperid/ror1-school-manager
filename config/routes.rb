@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     resources :people do
       resource :account, controller: "accounts"
     end
+    resources :formation_plans
+    resources :school_classes
 
     get "people/:person_id/account/invitation",
         to: "accounts#invitation",

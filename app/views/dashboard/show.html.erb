@@ -1,10 +1,31 @@
 <% content_for :title, "Dashboard" %>
 
 <% if current_account.admin? %>
-  <section class="card">
-    <h1>Admin dashboard</h1>
-    <p>Manage people, linked accounts, and download invitation files for password setup.</p>
-    <p><%= link_to "Manage people", admin_people_path, class: "primary-link" %></p>
+  <section class="page-heading">
+    <div>
+      <h1>Admin dashboard</h1>
+      <p>Manage the school directory, formation plans, and class structure from here.</p>
+    </div>
+  </section>
+
+  <section class="detail-grid">
+    <article class="card">
+      <h2>People</h2>
+      <p>Create people, manage linked accounts, and assign collaborator or student roles.</p>
+      <p><%= link_to "Manage people", admin_people_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>Formation plans</h2>
+      <p>Create the plans that school classes will belong to.</p>
+      <p><%= link_to "Manage formation plans", admin_formation_plans_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>School classes</h2>
+      <p>Assign each class to a formation plan and a responsible collaborator.</p>
+      <p><%= link_to "Manage school classes", admin_school_classes_path, class: "primary-link" %></p>
+    </article>
   </section>
 <% else %>
   <section class="card">
