@@ -3,9 +3,11 @@
 <section class="page-heading">
   <div>
     <h1>Units</h1>
-    <p>Manage units and review the modules that use them.</p>
+    <p><%= current_account.admin? ? "Manage units and review the modules that use them." : "Review the units you teach and manage their grades." %></p>
   </div>
-  <%= link_to "New unit", new_admin_unit_path, class: "primary-link" %>
+  <% if current_account.admin? %>
+    <%= link_to "New unit", new_admin_unit_path, class: "primary-link" %>
+  <% end %>
 </section>
 
 <% if @units.any? %>
@@ -29,14 +31,16 @@
             <td><%= pluralize(unit.grade_count, "grade") %></td>
             <td>
               <div><%= link_to "View", admin_unit_path(unit) %></div>
-              <div><%= link_to "Edit", edit_admin_unit_path(unit) %></div>
-              <div>
-                <%= button_to "Delete",
-                              admin_unit_path(unit),
-                              method: :delete,
-                              class: "secondary-button",
-                              data: { turbo_confirm: "Delete #{unit.name}?" } %>
-              </div>
+              <% if current_account.admin? %>
+                <div><%= link_to "Edit", edit_admin_unit_path(unit) %></div>
+                <div>
+                  <%= button_to "Delete",
+                                admin_unit_path(unit),
+                                method: :delete,
+                                class: "secondary-button",
+                                data: { turbo_confirm: "Delete #{unit.name}?" } %>
+                </div>
+              <% end %>
             </td>
           </tr>
         <% end %>
@@ -46,6 +50,6 @@
 <% else %>
   <section class="card">
     <h2>No units yet</h2>
-    <p>Create units first so you can attach them to learning modules.</p>
+    <p><%= current_account.admin? ? "Create units first so you can attach them to learning modules." : "No units are assigned to your lectures yet." %></p>
   </section>
 <% end %>

@@ -1,6 +1,6 @@
 <%= render "accounts/shared/error_messages", resource: grade %>
 
-<%= form_with model: [:admin, grade] do |form| %>
+<%= form_with model: [:admin, unit, grade] do |form| %>
   <div class="form-grid">
     <div>
       <%= form.label :student_id, "Student" %>
@@ -9,7 +9,7 @@
 
     <div>
       <%= form.label :unit_id, "Unit" %>
-      <%= form.collection_select :unit_id, units, :id, :name, {}, { required: true } %>
+      <%= form.text_field :unit_id, value: unit.name, disabled: true %>
     </div>
 
     <div>

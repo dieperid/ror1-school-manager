@@ -1,4 +1,6 @@
 class Unit < ApplicationRecord
+  scope :taught_by, ->(collaborator) { joins(:lectures).where(lectures: { collaborator_id: collaborator.id }).distinct }
+
   has_many :module_units, dependent: :destroy
   has_many :learning_modules, -> { order(:name) }, through: :module_units
   has_many :lectures, dependent: :restrict_with_exception

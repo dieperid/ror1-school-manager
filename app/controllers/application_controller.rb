@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
-  helper_method :current_person
+  helper_method :current_person, :current_collaborator
 
   protected
 
@@ -18,5 +18,9 @@ class ApplicationController < ActionController::Base
 
   def current_person
     current_account&.person
+  end
+
+  def current_collaborator
+    current_person&.collaborator
   end
 end

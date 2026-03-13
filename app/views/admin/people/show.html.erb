@@ -118,12 +118,8 @@
     <div class="page-heading">
       <div>
         <h2>Grades</h2>
-        <p>Grades recorded for this student.</p>
+        <p>Grades recorded for this student. Manage them from the relevant unit page.</p>
       </div>
-    </div>
-
-    <div class="form-actions">
-      <%= link_to "New grade", new_admin_grade_path(student_id: @person.student.id), class: "primary-link" %>
     </div>
 
     <% if @person.student.grades.any? %>
@@ -139,10 +135,10 @@
         <tbody>
           <% @person.student.grades.includes(:unit).order(awarded_on: :desc, created_at: :desc).each do |grade| %>
             <tr>
-              <td><%= grade.unit.name %></td>
+              <td><%= link_to grade.unit.name, admin_unit_path(grade.unit) %></td>
               <td><%= l(grade.awarded_on) %></td>
               <td><strong><%= grade.value %></strong></td>
-              <td><%= link_to "View", admin_grade_path(grade) %></td>
+              <td><%= link_to "Open unit", admin_unit_path(grade.unit) %></td>
             </tr>
           <% end %>
         </tbody>

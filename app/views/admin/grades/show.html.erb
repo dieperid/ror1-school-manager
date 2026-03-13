@@ -6,8 +6,8 @@
     <p>Review the recorded grade for this student and unit.</p>
   </div>
   <div class="form-actions">
-    <%= link_to "Edit grade", edit_admin_grade_path(@grade), class: "primary-link" %>
-    <%= link_to "Back to grades", admin_grades_path %>
+    <%= link_to "Edit grade", edit_admin_unit_grade_path(@unit, @grade), class: "primary-link" %>
+    <%= link_to "Back to unit", admin_unit_path(@unit) %>
   </div>
 </section>
 
@@ -15,7 +15,7 @@
   <div class="detail-grid">
     <div class="detail-item">
       <span class="detail-label">Student</span>
-      <strong><%= link_to @grade.student_name, admin_person_path(@grade.student.person) %></strong>
+      <strong><%= current_account.admin? ? link_to(@grade.student_name, admin_person_path(@grade.student.person)) : @grade.student_name %></strong>
     </div>
     <div class="detail-item">
       <span class="detail-label">Unit</span>
@@ -33,7 +33,7 @@
 
   <div class="form-actions">
     <%= button_to "Delete grade",
-                  admin_grade_path(@grade),
+                  admin_unit_grade_path(@unit, @grade),
                   method: :delete,
                   class: "secondary-button",
                   data: { turbo_confirm: "Delete this grade?" } %>

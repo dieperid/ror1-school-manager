@@ -7,8 +7,13 @@ module Admin
 
     def require_admin!
       return if current_account&.admin?
+      return if collaborator_access_allowed?
 
       redirect_to root_path, alert: "You are not allowed to access the admin area."
+    end
+
+    def collaborator_access_allowed?
+      false
     end
   end
 end

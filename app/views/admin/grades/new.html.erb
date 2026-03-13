@@ -3,11 +3,11 @@
 <section class="page-heading">
   <div>
     <h1>New grade</h1>
-    <p>Record a grade for a student in a specific unit.</p>
+    <p>Record a grade for a student in <%= @unit.name %>.</p>
   </div>
-  <%= link_to "Back to grades", admin_grades_path %>
+  <%= link_to "Back to unit", admin_unit_path(@unit) %>
 </section>
 
 <section class="card">
-  <%= render "form", grade: @grade, students: @students, units: @units, submit_label: "Create grade" %>
+  <%= render "form", grade: @grade, unit: @unit, students: @students, submit_label: "Create grade" %>
 </section>

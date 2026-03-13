@@ -3,7 +3,7 @@ module Admin
     before_action :set_unit, only: %i[show edit update destroy]
 
     def index
-      @units = Unit.includes(:learning_modules, :lectures).order(:name)
+      @units = accessible_units.includes(:learning_modules, :lectures).order(:name)
     end
 
     def show
@@ -46,8 +46,23 @@ module Admin
 
     private
 
+    def collaborator_access_allowed?
+      return false unless current_collaborator.present?
+      return true if action_name == "index"
+
+      action_name == "show" && Unit.taught_by(current_collaborator).where(id: params[:id]).exists?
+    end
+
+    def accessible_units
+      return Unit.all if current_account.admin?
+
+      Unit.taught_by(current_collaborator)
+    end
+
     def set_unit
-      @unit = Unit.includes(:learning_modules, :lectures, grades: { student: :person }).find(params[:id])
+      @unit = accessible_units
+        .includes(:learning_modules, :lectures, grades: { student: :person })
+        .find(params[:id])
     end
 
     def unit_params
