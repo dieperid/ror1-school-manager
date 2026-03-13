@@ -1,0 +1,63 @@
+<% content_for :title, @unit.name %>
+
+<section class="page-heading">
+  <div>
+    <h1><%= @unit.name %></h1>
+    <p>Review the unit and the learning modules linked to it.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "Edit unit", edit_admin_unit_path(@unit), class: "primary-link" %>
+    <%= link_to "Back to units", admin_units_path %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label">Name</span>
+      <strong><%= @unit.name %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Learning modules</span>
+      <strong><%= @learning_modules.map(&:name).presence&.join(", ") || "None" %></strong>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= button_to "Delete unit",
+                  admin_unit_path(@unit),
+                  method: :delete,
+                  class: "secondary-button",
+                  data: { turbo_confirm: "Delete #{@unit.name}?" } %>
+  </div>
+</section>
+
+<section class="card">
+  <div class="page-heading">
+    <div>
+      <h2>Linked learning modules</h2>
+      <p>Modules currently using this unit.</p>
+    </div>
+  </div>
+
+  <% if @learning_modules.any? %>
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @learning_modules.each do |learning_module| %>
+          <tr>
+            <td><strong><%= learning_module.name %></strong></td>
+            <td><%= link_to "View", admin_learning_module_path(learning_module) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No learning modules are linked to this unit yet.</p>
+  <% end %>
+</section>

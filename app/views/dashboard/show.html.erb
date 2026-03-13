@@ -26,6 +26,18 @@
       <p>Assign each class to a formation plan and a responsible collaborator.</p>
       <p><%= link_to "Manage school classes", admin_school_classes_path, class: "primary-link" %></p>
     </article>
+
+    <article class="card">
+      <h2>Learning modules</h2>
+      <p>Attach modules to formation plans and link the units they contain.</p>
+      <p><%= link_to "Manage learning modules", admin_learning_modules_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>Units</h2>
+      <p>Create reusable units and attach them to one or more learning modules.</p>
+      <p><%= link_to "Manage units", admin_units_path, class: "primary-link" %></p>
+    </article>
   </section>
 <% else %>
   <section class="card">
