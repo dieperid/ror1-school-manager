@@ -1,0 +1,16 @@
+<% content_for :title, "Edit Formation Plan" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Edit formation plan</h1>
+    <p>Update the plan name and review the classes attached to it.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "View formation plan", admin_formation_plan_path(@formation_plan) %>
+    <%= link_to "Back to formation plans", admin_formation_plans_path %>
+  </div>
+</section>
+
+<section class="card">
+  <%= render "form", formation_plan: @formation_plan, submit_label: "Save changes" %>
+</section>
