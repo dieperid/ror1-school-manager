@@ -1,0 +1,7 @@
+member_html_grade:
+  student: member_student
+  unit: html_unit
+  value: 5.5
+  awarded_on: 2026-02-10
+  created_at: <%= 2.days.ago %>
+  updated_at: <%= 1.day.ago %>
