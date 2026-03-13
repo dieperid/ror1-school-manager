@@ -51,12 +51,20 @@ input[type="email"],
 input[type="date"],
 input[type="number"],
 input[type="password"],
-input[type="tel"] {
+input[type="tel"],
+select,
+textarea {
   width: 100%;
   padding: 0.65rem 0.75rem;
   border: 1px solid var(--border);
   border-radius: 0.6rem;
   background: #fff;
+  color: var(--text);
+}
+
+textarea {
+  min-height: 6rem;
+  resize: vertical;
 }
 
 button,
