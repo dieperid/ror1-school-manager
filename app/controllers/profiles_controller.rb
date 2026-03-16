@@ -25,6 +25,7 @@ class ProfilesController < ApplicationController
   def set_profile
     @account = current_account
     @person = current_person
+    @student_grades = @person.student&.grades&.includes(:unit)&.order(awarded_on: :desc, created_at: :desc) || []
   end
 
   def person_params

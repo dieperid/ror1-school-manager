@@ -18,6 +18,9 @@ class ProfileFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match "My profile", response.body
     assert_match "Student", response.body
+    assert_match "My grades", response.body
+    assert_match "HTML & CSS", response.body
+    assert_match "5.5", response.body
 
     patch profile_path, params: {
       person: {

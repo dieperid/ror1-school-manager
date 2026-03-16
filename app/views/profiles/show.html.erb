@@ -46,3 +46,37 @@
     </div>
   </div>
 </section>
+
+<% if @person.student.present? %>
+  <section class="card">
+    <div class="page-heading">
+      <div>
+        <h2>My grades</h2>
+        <p>Grades recorded for your units.</p>
+      </div>
+    </div>
+
+    <% if @student_grades.any? %>
+      <table class="people-table">
+        <thead>
+          <tr>
+            <th>Unit</th>
+            <th>Awarded on</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @student_grades.each do |grade| %>
+            <tr>
+              <td><%= grade.unit.name %></td>
+              <td><%= l(grade.awarded_on) %></td>
+              <td><strong><%= grade.value %></strong></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No grades have been recorded yet.</p>
+    <% end %>
+  </section>
+<% end %>
