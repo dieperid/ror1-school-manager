@@ -3,13 +3,11 @@ class SchedulesController < ApplicationController
   before_action :require_collaborator!
 
   def show
-    @month = parsed_month
-    @calendar_days = calendar_range.to_a
-    @lectures_by_date = current_collaborator.lectures
-                                          .includes(:room, :unit)
-                                          .where(date: calendar_range)
-                                          .order(:date, :start_time)
-                                          .group_by(&:date)
+    @start_date = parsed_start_date
+    @lectures = current_collaborator.lectures
+                                  .includes(:room, :unit)
+                                  .where(date: visible_range)
+                                  .order(:date, :start_time)
   end
 
   private
@@ -20,15 +18,13 @@ class SchedulesController < ApplicationController
     redirect_to profile_path, alert: "You do not have a collaborator schedule."
   end
 
-  def parsed_month
-    return Date.current.beginning_of_month if params[:month].blank?
-
-    Date.strptime(params[:month], "%Y-%m").beginning_of_month
+  def parsed_start_date
+    params.fetch(:start_date, Date.current).to_date
   rescue ArgumentError
-    Date.current.beginning_of_month
+    Date.current
   end
 
-  def calendar_range
-    @calendar_range ||= @month.beginning_of_month.beginning_of_week(:monday)..@month.end_of_month.end_of_week(:monday)
+  def visible_range
+    @visible_range ||= @start_date.beginning_of_month.beginning_of_week(:monday)..@start_date.end_of_month.end_of_week(:monday)
   end
 end

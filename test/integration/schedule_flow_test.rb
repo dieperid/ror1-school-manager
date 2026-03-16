@@ -4,7 +4,7 @@ class ScheduleFlowTest < ActionDispatch::IntegrationTest
   test "collaborator can view their schedule calendar" do
     sign_in accounts(:teacher)
 
-    get schedule_path(month: "2026-03")
+    get schedule_path(start_date: "2026-03-01")
 
     assert_response :success
     assert_match "My schedule", response.body
