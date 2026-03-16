@@ -47,6 +47,18 @@
   </div>
 </section>
 
+<% if @person.collaborator.present? %>
+  <section class="card">
+    <div class="page-heading">
+      <div>
+        <h2>My schedule</h2>
+        <p>Open the month view of your lectures.</p>
+      </div>
+      <%= link_to "Open my schedule", schedule_path, class: "primary-link" %>
+    </div>
+  </section>
+<% end %>
+
 <% if @person.student.present? %>
   <section class="card">
     <div class="page-heading">

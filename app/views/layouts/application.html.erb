@@ -39,6 +39,9 @@
         <% if current_account.admin? || current_collaborator.present? %>
           <%= link_to "Units", admin_units_path %>
         <% end %>
+        <% if current_collaborator.present? %>
+          <%= link_to "My schedule", schedule_path %>
+        <% end %>
         <%= link_to "My profile", profile_path %>
         <span>Hello <%= current_person.full_name %></span>
         <%= button_to "Log out", destroy_account_session_path, method: :delete, class: "secondary-button" %>

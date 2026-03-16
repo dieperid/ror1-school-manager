@@ -240,6 +240,83 @@ button,
   color: var(--danger);
 }
 
+.calendar-scroll {
+  overflow-x: auto;
+}
+
+.schedule-calendar {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: separate;
+  border-spacing: 0.75rem;
+}
+
+.schedule-calendar th {
+  padding: 0 0 0.5rem;
+  color: var(--muted);
+  text-align: left;
+}
+
+.calendar-day {
+  width: 14.28%;
+  min-height: 12rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(31, 41, 51, 0.08);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.72);
+  vertical-align: top;
+}
+
+.calendar-day--outside {
+  background: rgba(216, 209, 195, 0.18);
+  color: var(--muted);
+}
+
+.calendar-day--today {
+  border-color: rgba(15, 118, 110, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.25);
+}
+
+.calendar-day-number {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+}
+
+.calendar-day-number small {
+  color: var(--muted);
+}
+
+.calendar-lectures {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.calendar-lecture {
+  padding: 0.75rem;
+  border-radius: 0.85rem;
+  background: linear-gradient(180deg, rgba(15, 118, 110, 0.12), rgba(17, 94, 89, 0.04));
+  border: 1px solid rgba(15, 118, 110, 0.16);
+}
+
+.calendar-lecture strong,
+.calendar-lecture div {
+  display: block;
+}
+
+.calendar-lecture div + div {
+  color: var(--muted);
+}
+
+.calendar-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
 @media (max-width: 720px) {
   .topbar,
   .page-heading,
@@ -270,5 +347,9 @@ button,
   .people-table td {
     padding: 0.45rem 0;
     border: 0;
+  }
+
+  .schedule-calendar {
+    min-width: 720px;
   }
 }

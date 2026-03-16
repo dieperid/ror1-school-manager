@@ -1,0 +1,76 @@
+<% content_for :title, "My Schedule" %>
+
+<section class="page-heading">
+  <div>
+    <h1>My schedule</h1>
+    <p>Review your lectures for <%= @month.strftime("%B %Y") %>.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "Previous month", schedule_path(month: @month.prev_month.strftime("%Y-%m")) %>
+    <%= link_to "Today", schedule_path(month: Date.current.strftime("%Y-%m")), class: "primary-link" %>
+    <%= link_to "Next month", schedule_path(month: @month.next_month.strftime("%Y-%m")) %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label">Collaborator</span>
+      <strong><%= current_collaborator.full_name %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Month</span>
+      <strong><%= @month.strftime("%B %Y") %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Lectures</span>
+      <strong><%= pluralize(@lectures_by_date.values.flatten.size, "lecture") %></strong>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="calendar-scroll">
+    <table class="schedule-calendar">
+      <thead>
+        <tr>
+          <% Date::ABBR_DAYNAMES.rotate(1).each do |day_name| %>
+            <th><%= day_name %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @calendar_days.each_slice(7) do |week| %>
+          <tr>
+            <% week.each do |day| %>
+              <% lectures = @lectures_by_date.fetch(day, []) %>
+              <% cell_classes = ["calendar-day"] %>
+              <% cell_classes << "calendar-day--outside" if day.month != @month.month %>
+              <% cell_classes << "calendar-day--today" if day == Date.current %>
+              <td class="<%= cell_classes.join(" ") %>">
+                <div class="calendar-day-number">
+                  <span><%= day.strftime("%d") %></span>
+                  <small><%= day.strftime("%a") %></small>
+                </div>
+
+                <% if lectures.any? %>
+                  <div class="calendar-lectures">
+                    <% lectures.each do |lecture| %>
+                      <article class="calendar-lecture">
+                        <strong><%= link_to lecture.unit.name, admin_unit_path(lecture.unit) %></strong>
+                        <div><%= "#{lecture.start_time.strftime('%H:%M')} - #{lecture.end_time.strftime('%H:%M')}" %></div>
+                        <div><%= lecture.room.name %></div>
+                      </article>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <p class="calendar-empty">No lecture</p>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

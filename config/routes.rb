@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   end
 
   resource :profile, only: %i[show edit update], controller: "profiles"
+  resource :schedule, only: :show, controller: "schedules"
 
   namespace :admin do
     resources :people do
