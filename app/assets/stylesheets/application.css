@@ -147,6 +147,7 @@ button,
   border-radius: 1rem;
   background: var(--card);
   box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+  margin: 1.5rem 0;
 }
 
 .page-heading {
@@ -229,7 +230,7 @@ button,
 .people-table td {
   padding: 0.9rem 0.75rem;
   border-bottom: 1px solid rgba(31, 41, 51, 0.08);
-  vertical-align: top;
+  text-align: left;
 }
 
 #error_explanation {
