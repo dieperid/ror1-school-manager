@@ -9,11 +9,13 @@
         <%= link_to "Previous", pagination_path_for(pagination.previous_page), class: "secondary-button" %>
       <% end %>
 
-      <% (1..pagination.total_pages).each do |page_number| %>
-        <% if page_number == pagination.current_page %>
-          <span class="pagination-page pagination-page-current"><%= page_number %></span>
+      <% pagination_page_items(pagination).each do |item| %>
+        <% if item == :gap %>
+          <span class="pagination-gap">...</span>
+        <% elsif item == pagination.current_page %>
+          <span class="pagination-page pagination-page-current"><%= item %></span>
         <% else %>
-          <%= link_to page_number, pagination_path_for(page_number), class: "pagination-page" %>
+          <%= link_to item, pagination_path_for(item), class: "pagination-page" %>
         <% end %>
       <% end %>
 

@@ -284,6 +284,11 @@ button,
   font-weight: 700;
 }
 
+.pagination-gap {
+  color: var(--muted);
+  padding: 0 0.2rem;
+}
+
 #error_explanation {
   margin-bottom: 1rem;
   padding: 1rem;
