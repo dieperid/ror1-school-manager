@@ -6,7 +6,9 @@ module Admin
     before_action :ensure_prerequisites!, only: %i[new create]
 
     def index
-      @school_classes = SchoolClass.includes(:formation_plan, :students, responsible_collaborator: [ :person, :collaborator_roles ]).order(:name)
+      @school_classes, @pagination = paginate_scope(
+        SchoolClass.includes(:formation_plan, :students, responsible_collaborator: [ :person, :collaborator_roles ]).order(:name)
+      )
     end
 
     def show

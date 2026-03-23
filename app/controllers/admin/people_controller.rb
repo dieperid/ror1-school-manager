@@ -7,7 +7,7 @@ module Admin
     def index
       @role_filter_options = role_filter_options
       @role_filter = selected_role_filter
-      @people = filtered_people_scope
+      @people, @pagination = paginate_scope(filtered_people_scope)
     end
 
     def show

@@ -6,7 +6,7 @@ module Admin
     before_action :ensure_prerequisites!, only: %i[new create]
 
     def index
-      @lectures = Lecture.includes(:room, :unit, collaborator: :person).order(:date, :start_time)
+      @lectures, @pagination = paginate_scope(Lecture.includes(:room, :unit, collaborator: :person).order(:date, :start_time))
     end
 
     def show

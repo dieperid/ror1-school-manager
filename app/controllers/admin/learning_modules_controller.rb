@@ -4,7 +4,7 @@ module Admin
     before_action :load_form_dependencies, only: %i[new create edit update]
 
     def index
-      @learning_modules = LearningModule.includes(:formation_plans, :units).order(:name)
+      @learning_modules, @pagination = paginate_scope(LearningModule.includes(:formation_plans, :units).order(:name))
     end
 
     def show

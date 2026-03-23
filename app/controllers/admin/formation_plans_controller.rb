@@ -3,7 +3,7 @@ module Admin
     before_action :set_formation_plan, only: %i[show edit update destroy]
 
     def index
-      @formation_plans = FormationPlan.includes(:school_classes, :learning_modules).order(:name)
+      @formation_plans, @pagination = paginate_scope(FormationPlan.includes(:school_classes, :learning_modules).order(:name))
     end
 
     def show

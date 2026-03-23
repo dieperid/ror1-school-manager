@@ -4,9 +4,10 @@ module Admin
     before_action :redirect_collaborator_public_path!, only: %i[index show]
 
     def index
-      @units = accessible_units.includes(:learning_modules).order(:name)
-      @lecture_counts = Lecture.where(unit_id: @units.select(:id)).group(:unit_id).count
-      @grade_counts = Grade.where(unit_id: @units.select(:id)).group(:unit_id).count
+      @units, @pagination = paginate_scope(accessible_units.includes(:learning_modules).order(:name))
+      unit_ids = @units.map(&:id)
+      @lecture_counts = unit_ids.any? ? Lecture.where(unit_id: unit_ids).group(:unit_id).count : {}
+      @grade_counts = unit_ids.any? ? Grade.where(unit_id: unit_ids).group(:unit_id).count : {}
     end
 
     def show
