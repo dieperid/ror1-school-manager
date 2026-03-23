@@ -24,11 +24,19 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  min-height: 100%;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
   background: linear-gradient(180deg, #f1ede3 0%, #f8f6f1 100%);
   color: var(--text);
   font-family: Georgia, "Times New Roman", serif;
+  display: flex;
+  flex-direction: column;
 }
 
 a {
@@ -120,6 +128,8 @@ button,
 }
 
 .page-shell {
+  flex: 1;
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
   padding: 1.5rem;
