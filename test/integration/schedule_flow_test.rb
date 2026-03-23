@@ -14,13 +14,17 @@ class ScheduleFlowTest < ActionDispatch::IntegrationTest
     assert_match "Lab A", response.body
   end
 
-  test "student cannot access collaborator schedule" do
+  test "student can view their schedule calendar" do
     sign_in accounts(:member)
 
-    get schedule_path
+    get schedule_path(start_date: "2026-03-01")
 
-    assert_redirected_to profile_path
-    follow_redirect!
-    assert_match "You do not have a collaborator schedule.", response.body
+    assert_response :success
+    assert_match "My schedule", response.body
+    assert_match "March 2026", response.body
+    assert_match "HTML &amp; CSS", response.body
+    assert_match "08:15 - 10:00", response.body
+    assert_match "Lab A", response.body
+    assert_match "System Administrator", response.body
   end
 end

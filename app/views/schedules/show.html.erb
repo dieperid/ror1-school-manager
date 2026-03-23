@@ -3,7 +3,7 @@
 <section class="page-heading">
   <div>
     <h1>My schedule</h1>
-    <p>Review your lectures in a monthly calendar.</p>
+    <p><%= current_collaborator.present? ? "Review your lectures in a monthly calendar." : "Review the lectures linked to your class formation plan." %></p>
   </div>
   <div class="form-actions">
     <%= link_to "Today", schedule_path(start_date: Date.current), class: "primary-link" %>
@@ -13,13 +13,19 @@
 <section class="card stack">
   <div class="detail-grid">
     <div class="detail-item">
-      <span class="detail-label">Collaborator</span>
-      <strong><%= current_collaborator.full_name %></strong>
+      <span class="detail-label"><%= @schedule_role_label %></span>
+      <strong><%= @schedule_owner_name %></strong>
     </div>
     <div class="detail-item">
       <span class="detail-label">Month</span>
       <strong><%= @start_date.strftime("%B %Y") %></strong>
     </div>
+    <% if @formation_plan_names.any? %>
+      <div class="detail-item">
+        <span class="detail-label">Formation plans</span>
+        <strong><%= @formation_plan_names.join(", ") %></strong>
+      </div>
+    <% end %>
     <div class="detail-item">
       <span class="detail-label">Lectures</span>
       <strong><%= pluralize(@lectures.size, "lecture") %></strong>
@@ -36,9 +42,18 @@
         <div class="calendar-lectures">
           <% lectures.each do |lecture| %>
             <article class="calendar-lecture">
-              <strong><%= link_to lecture.unit.name, admin_unit_path(lecture.unit) %></strong>
+              <strong>
+                <% if current_collaborator.present? %>
+                  <%= link_to lecture.unit.name, admin_unit_path(lecture.unit) %>
+                <% else %>
+                  <%= lecture.unit.name %>
+                <% end %>
+              </strong>
               <div><%= "#{lecture.start_time.strftime('%H:%M')} - #{lecture.end_time.strftime('%H:%M')}" %></div>
               <div><%= lecture.room.name %></div>
+              <% if current_student.present? %>
+                <div><%= lecture.collaborator.full_name %></div>
+              <% end %>
             </article>
           <% end %>
         </div>

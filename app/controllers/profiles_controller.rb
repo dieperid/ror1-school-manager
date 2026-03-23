@@ -26,6 +26,10 @@ class ProfilesController < ApplicationController
     @account = current_account
     @person = current_person
     @student_grades = @person.student&.grades&.includes(:unit)&.order(awarded_on: :desc, created_at: :desc) || []
+    @schedule_week_range = current_week_range
+    @weekly_schedule_lectures = weekly_schedule_lectures
+    @schedule_week_dates = @schedule_week_range.to_a
+    @weekly_schedule_lectures_by_date = @weekly_schedule_lectures.group_by(&:date)
   end
 
   def person_params
@@ -97,6 +101,23 @@ class ProfilesController < ApplicationController
   def merge_account_errors
     @account.errors.full_messages.each do |message|
       @person.errors.add(:base, message) unless @person.errors.full_messages.include?(message)
+    end
+  end
+
+  def current_week_range
+    Date.current.beginning_of_week(:monday)..Date.current.end_of_week(:monday)
+  end
+
+  def weekly_schedule_lectures
+    return [] unless current_collaborator.present? || current_student.present?
+
+    if current_collaborator.present?
+      current_collaborator.lectures
+                          .includes(:room, :unit)
+                          .where(date: current_week_range)
+                          .order(:date, :start_time)
+    else
+      current_student.scheduled_lectures_between(current_week_range)
     end
   end
 end

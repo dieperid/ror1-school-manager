@@ -14,13 +14,19 @@ class ProfileFlowTest < ActionDispatch::IntegrationTest
   test "member can view and update personal information" do
     sign_in accounts(:member)
 
-    get profile_path
-    assert_response :success
-    assert_match "My profile", response.body
-    assert_match "Student", response.body
-    assert_match "My grades", response.body
-    assert_match "HTML & CSS", response.body
-    assert_match "5.5", response.body
+    travel_to Date.new(2026, 3, 18) do
+      get profile_path
+      assert_response :success
+      assert_match "My profile", response.body
+      assert_match "Student", response.body
+      assert_match "My schedule", response.body
+      assert_match "Open full calendar", response.body
+      assert_match "HTML &amp; CSS", response.body
+      assert_match "08:15 - 10:00", response.body
+      assert_match "System Administrator", response.body
+      assert_match "My grades", response.body
+      assert_match "5.5", response.body
+    end
 
     patch profile_path, params: {
       person: {

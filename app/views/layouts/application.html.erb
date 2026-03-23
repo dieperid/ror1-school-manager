@@ -41,7 +41,7 @@
             <%= link_to "Units", admin_units_path %>
           <% end %>
 
-          <% if current_collaborator.present? %>
+          <% if current_collaborator.present? || current_student.present? %>
             <%= link_to "My schedule", schedule_path %>
           <% end %>
 
