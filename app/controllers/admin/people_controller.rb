@@ -5,7 +5,9 @@ module Admin
     before_action :prepare_form_dependencies, only: %i[new edit]
 
     def index
-      @people = Person.includes(:account, { collaborator: :collaborator_roles }, :student).order(:last_name, :first_name)
+      @role_filter_options = role_filter_options
+      @role_filter = selected_role_filter
+      @people = filtered_people_scope
     end
 
     def show
@@ -112,6 +114,47 @@ module Admin
 
     def requested_person_role_type
       params.fetch(:person, {}).fetch(:role_type, @person.role_type).presence || "none"
+    end
+
+    def selected_role_filter
+      @role_filter_options.map(&:last).include?(params[:role]) ? params[:role] : "all"
+    end
+
+    def role_filter_options
+      [
+        ["All roles", "all"],
+        ["Admin accounts", "admin_account"],
+        ["Collaborators", "collaborator"],
+        ["Students", "student"],
+        ["No role", "none"]
+      ] + CollaboratorRole.order(:title).pluck(:title, :id).map { |title, id| ["Collaborator role: #{title}", "collaborator_role:#{id}"] }
+    end
+
+    def collaborator_role_filter_id
+      return unless @role_filter.start_with?("collaborator_role:")
+
+      Integer(@role_filter.delete_prefix("collaborator_role:"), exception: false)
+    end
+
+    def filtered_people_scope
+      scope = Person
+        .includes(:account, { collaborator: :collaborator_roles }, :student)
+        .left_outer_joins(:account, :student, collaborator: :collaborator_roles)
+        .distinct
+        .order(:last_name, :first_name)
+
+      case @role_filter
+      when "admin_account"
+        scope.where(accounts: { admin: true })
+      when "collaborator"
+        scope.where.not(collaborators: { id: nil })
+      when "student"
+        scope.where.not(students: { id: nil })
+      when "none"
+        scope.where(collaborators: { id: nil }, students: { id: nil })
+      else
+        collaborator_role_filter_id.present? ? scope.where(collaborator_roles: { id: collaborator_role_filter_id }) : scope
+      end
     end
 
     def account_requested?

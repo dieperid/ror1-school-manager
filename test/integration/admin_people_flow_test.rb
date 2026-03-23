@@ -90,6 +90,31 @@ class AdminPeopleFlowTest < ActionDispatch::IntegrationTest
     assert_equal account.id, Account.with_reset_password_token(token).id
   end
 
+  test "admin can filter people by role" do
+    sign_in accounts(:admin)
+
+    get admin_people_path(role: "student")
+    assert_response :success
+    assert_match people(:member_person).full_name, response.body
+    assert_match people(:business_student_person).full_name, response.body
+    assert_no_match people(:admin_person).full_name, response.body
+    assert_no_match people(:unlinked_person).full_name, response.body
+
+    get admin_people_path(role: "none")
+    assert_response :success
+    assert_match people(:unlinked_person).full_name, response.body
+    assert_no_match people(:member_person).full_name, response.body
+    assert_no_match people(:admin_person).full_name, response.body
+
+    get admin_people_path(role: "collaborator_role:#{collaborator_roles(:administrator_role).id}")
+    assert_response :success
+    assert_match "Collaborator role: Administrator", response.body
+    assert_match "Collaborator role: Mentor", response.body
+    assert_match people(:admin_person).full_name, response.body
+    assert_no_match people(:member_person).full_name, response.body
+    assert_no_match people(:unlinked_person).full_name, response.body
+  end
+
   test "admin can read update and delete a person" do
     sign_in accounts(:admin)
     person = people(:member_person)

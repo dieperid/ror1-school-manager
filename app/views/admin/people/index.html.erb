@@ -8,6 +8,26 @@
   <%= link_to "New person", new_admin_person_path, class: "primary-link" %>
 </section>
 
+<section class="card">
+  <%= form_with url: admin_people_path, method: :get, local: true do |form| %>
+    <div class="form-grid">
+      <div>
+        <%= form.label :role, "Filter by role" %>
+        <%= form.select :role,
+                        options_for_select(@role_filter_options, @role_filter),
+                        {},
+                        { onchange: "this.form.requestSubmit()" } %>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <% if @role_filter != "all" %>
+        <%= link_to "Clear", admin_people_path, class: "secondary-button" %>
+      <% end %>
+    </div>
+  <% end %>
+</section>
+
 <% if @people.any? %>
   <div class="card">
     <table class="people-table">
@@ -81,6 +101,6 @@
 <% else %>
   <section class="card">
     <h2>No people yet</h2>
-    <p>Create the first person and optionally generate the account invitation file in the same action.</p>
+    <p><%= @role_filter == "all" ? "Create the first person and optionally generate the account invitation file in the same action." : "No people match the selected role filter." %></p>
   </section>
 <% end %>
