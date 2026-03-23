@@ -6,3 +6,12 @@ member_student:
   departure_reason:
   created_at: <%= 4.days.ago %>
   updated_at: <%= 1.day.ago %>
+
+business_student:
+  person: business_student_person
+  admission_date: 2024-08-01
+  departure_date:
+  repeating_grade: false
+  departure_reason:
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>

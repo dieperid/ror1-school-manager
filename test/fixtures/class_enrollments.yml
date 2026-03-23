@@ -3,3 +3,9 @@ member_in_webdev_class:
   school_class: webdev_class
   created_at: <%= 2.days.ago %>
   updated_at: <%= 1.day.ago %>
+
+business_student_in_business_class:
+  student: business_student
+  school_class: business_class
+  created_at: <%= 2.days.ago %>
+  updated_at: <%= 1.day.ago %>

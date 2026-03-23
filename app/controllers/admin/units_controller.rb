@@ -9,7 +9,7 @@ module Admin
     def show
       @learning_modules = @unit.learning_modules.order(:name)
       @lectures = @unit.lectures.includes(:room, collaborator: :person).order(:date, :start_time)
-      @grades = @unit.grades.includes(student: :person).order(awarded_on: :desc, created_at: :desc)
+      @grades = visible_grades.includes(student: :person).order(awarded_on: :desc, created_at: :desc)
     end
 
     def new
@@ -67,6 +67,12 @@ module Admin
 
     def unit_params
       params.fetch(:unit, {}).permit(:name)
+    end
+
+    def visible_grades
+      return @unit.grades if current_account.admin?
+
+      @unit.grades.where(student_id: @unit.eligible_students.select(:id))
     end
   end
 end

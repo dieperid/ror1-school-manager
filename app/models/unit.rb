@@ -19,4 +19,10 @@ class Unit < ApplicationRecord
   def grade_count
     grades.size
   end
+
+  def eligible_students
+    Student.joins(school_classes: { formation_plan: { learning_modules: :units } })
+           .where(units: { id: id })
+           .distinct
+  end
 end

@@ -62,3 +62,16 @@ outsider_person:
   phone_number: "0772222222"
   created_at: <%= 4.days.ago %>
   updated_at: <%= 1.day.ago %>
+
+business_student_person:
+  avs_number: "756.0000.0000.07"
+  first_name: "Bianca"
+  last_name: "Business"
+  city: "Lausanne"
+  birth_date: 2005-04-18
+  postal_code: "1003"
+  street: "Market Street"
+  street_number: 7
+  phone_number: "0783334444"
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>

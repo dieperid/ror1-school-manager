@@ -14,8 +14,9 @@ module Admin
 
     def create
       @grade.assign_attributes(grade_params)
+      ensure_selected_student_is_allowed!
 
-      if @grade.save
+      if @grade.errors.empty? && @grade.save
         redirect_to admin_unit_path(@unit), notice: "Grade created."
       else
         render :new, status: :unprocessable_entity
@@ -26,7 +27,10 @@ module Admin
     end
 
     def update
-      if @grade.update(grade_params)
+      @grade.assign_attributes(grade_params)
+      ensure_selected_student_is_allowed!
+
+      if @grade.errors.empty? && @grade.save
         redirect_to admin_unit_path(@unit), notice: "Grade updated."
       else
         render :edit, status: :unprocessable_entity
@@ -59,18 +63,37 @@ module Admin
     end
 
     def set_grade
-      @grade = @unit.grades.includes(:unit, student: :person).find(params[:id])
+      @grade = visible_grades.includes(:unit, student: :person).find(params[:id])
     end
 
     def load_form_dependencies
-      @students = Student.joins(:person).includes(:person).order("people.last_name ASC, people.first_name ASC")
+      @students = available_students.includes(:person).to_a.sort_by { |student| [student.person.last_name, student.person.first_name] }
     end
 
     def ensure_prerequisites!
       if @students.empty?
-        redirect_to admin_unit_path(@unit), alert: "Create a student before creating a grade."
+        redirect_to admin_unit_path(@unit), alert: "No eligible students are linked to this unit yet."
         return
       end
+    end
+
+    def visible_grades
+      return @unit.grades if current_account.admin?
+
+      @unit.grades.where(student_id: @unit.eligible_students.select(:id))
+    end
+
+    def available_students
+      return Student.all if current_account.admin?
+
+      @unit.eligible_students
+    end
+
+    def ensure_selected_student_is_allowed!
+      return if @grade.student_id.blank?
+      return if @students.any? { |student| student.id == @grade.student_id }
+
+      @grade.errors.add(:student, "must belong to a formation plan that includes this unit")
     end
 
     def grade_params

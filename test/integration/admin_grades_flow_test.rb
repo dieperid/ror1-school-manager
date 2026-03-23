@@ -9,6 +9,11 @@ class AdminGradesFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match "New grade", response.body
 
+    get new_admin_unit_grade_path(unit)
+    assert_response :success
+    assert_match "Regular Member", response.body
+    assert_match "Bianca Business", response.body
+
     assert_difference("Grade.count", 1) do
       post admin_unit_grades_path(unit), params: {
         grade: {
@@ -85,6 +90,11 @@ class AdminGradesFlowTest < ActionDispatch::IntegrationTest
     assert_match "New grade", response.body
     assert_no_match "Edit unit", response.body
 
+    get new_admin_unit_grade_path(unit)
+    assert_response :success
+    assert_match "Regular Member", response.body
+    assert_no_match "Bianca Business", response.body
+
     assert_difference("Grade.count", 1) do
       post admin_unit_grades_path(unit), params: {
         grade: {
@@ -116,6 +126,19 @@ class AdminGradesFlowTest < ActionDispatch::IntegrationTest
     assert_difference("Grade.count", -1) do
       delete admin_unit_grade_path(unit, grade)
     end
+
+    assert_no_difference("Grade.count") do
+      post admin_unit_grades_path(unit), params: {
+        grade: {
+          student_id: students(:business_student).id,
+          awarded_on: "2026-03-27",
+          value: "4.0"
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
+    assert_match "Student must belong to a formation plan that includes this unit", response.body
   end
 
   test "collaborator cannot access grades for a unit they do not teach" do
