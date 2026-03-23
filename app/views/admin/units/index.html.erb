@@ -27,10 +27,10 @@
           <tr>
             <td><strong><%= unit.name %></strong></td>
             <td><%= unit.learning_modules.map(&:name).presence&.join(", ") || "None" %></td>
-            <td><%= pluralize(unit.lecture_count, "lecture") %></td>
-            <td><%= pluralize(unit.grade_count, "grade") %></td>
+            <td><%= pluralize(@lecture_counts.fetch(unit.id, 0), "lecture") %></td>
+            <td><%= pluralize(@grade_counts.fetch(unit.id, 0), "grade") %></td>
             <td>
-              <div><%= link_to "View", admin_unit_path(unit) %></div>
+              <div><%= link_to "View", unit_path_for_current_account(unit) %></div>
               <% if current_account.admin? %>
                 <div><%= link_to "Edit", edit_admin_unit_path(unit) %></div>
                 <div>

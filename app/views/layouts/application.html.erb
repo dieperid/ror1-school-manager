@@ -38,7 +38,7 @@
           <% end %>
 
           <% if current_account.admin? || current_collaborator.present? %>
-            <%= link_to "Units", admin_units_path %>
+            <%= link_to "Units", units_path_for_current_account %>
           <% end %>
 
           <% if current_collaborator.present? || current_student.present? %>

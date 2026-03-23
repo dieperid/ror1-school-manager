@@ -1,6 +1,7 @@
 <%= render "accounts/shared/error_messages", resource: grade %>
 
-<%= form_with model: [:admin, unit, grade] do |form| %>
+<%= form_with model: grade,
+              url: grade.persisted? ? unit_grade_path_for_current_account(unit, grade) : (current_account.admin? ? admin_unit_grades_path(unit) : unit_grades_path(unit)) do |form| %>
   <div class="form-grid">
     <div>
       <%= form.label :student_id, "Student" %>

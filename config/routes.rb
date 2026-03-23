@@ -14,6 +14,9 @@ Rails.application.routes.draw do
 
   resource :profile, only: %i[show edit update], controller: "profiles"
   resource :schedule, only: :show, controller: "schedules"
+  resources :units, only: %i[index show], controller: "admin/units" do
+    resources :grades, except: :index, controller: "admin/grades"
+  end
 
   namespace :admin do
     resources :people do

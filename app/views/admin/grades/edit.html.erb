@@ -6,8 +6,8 @@
     <p>Update the student, date, or grade value for <%= @unit.name %>.</p>
   </div>
   <div class="form-actions">
-    <%= link_to "View grade", admin_unit_grade_path(@unit, @grade) %>
-    <%= link_to "Back to unit", admin_unit_path(@unit) %>
+    <%= link_to "View grade", unit_grade_path_for_current_account(@unit, @grade) %>
+    <%= link_to "Back to unit", unit_path_for_current_account(@unit) %>
   </div>
 </section>
 

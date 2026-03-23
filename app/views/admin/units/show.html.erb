@@ -9,7 +9,7 @@
     <% if current_account.admin? %>
       <%= link_to "Edit unit", edit_admin_unit_path(@unit), class: "primary-link" %>
     <% end %>
-    <%= link_to "Back to units", admin_units_path %>
+    <%= link_to "Back to units", units_path_for_current_account %>
   </div>
 </section>
 
@@ -34,7 +34,7 @@
   </div>
 
   <div class="form-actions">
-    <%= link_to "New grade", new_admin_unit_grade_path(@unit), class: "primary-link" %>
+    <%= link_to "New grade", new_unit_grade_path_for_current_account(@unit), class: "primary-link" %>
     <% if current_account.admin? %>
       <%= link_to "New lecture", new_admin_lecture_path(unit_id: @unit.id), class: "primary-link" %>
       <%= button_to "Delete unit",
@@ -71,11 +71,11 @@
             <td><%= l(grade.awarded_on) %></td>
             <td><strong><%= grade.value %></strong></td>
             <td>
-              <div><%= link_to "View", admin_unit_grade_path(@unit, grade) %></div>
-              <div><%= link_to "Edit", edit_admin_unit_grade_path(@unit, grade) %></div>
+              <div><%= link_to "View", unit_grade_path_for_current_account(@unit, grade) %></div>
+              <div><%= link_to "Edit", edit_unit_grade_path_for_current_account(@unit, grade) %></div>
               <div>
                 <%= button_to "Delete",
-                              admin_unit_grade_path(@unit, grade),
+                              unit_grade_path_for_current_account(@unit, grade),
                               method: :delete,
                               class: "secondary-button",
                               data: { turbo_confirm: "Delete this grade?" } %>

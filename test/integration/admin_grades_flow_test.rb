@@ -80,23 +80,26 @@ class AdminGradesFlowTest < ActionDispatch::IntegrationTest
     sign_in accounts(:teacher)
     unit = units(:ruby_unit)
 
-    get admin_units_path
+    get units_path
     assert_response :success
     assert_match "Ruby Basics", response.body
     assert_no_match "HTML & CSS", response.body
 
-    get admin_unit_path(unit)
+    get admin_units_path
+    assert_redirected_to units_path
+
+    get unit_path(unit)
     assert_response :success
     assert_match "New grade", response.body
     assert_no_match "Edit unit", response.body
 
-    get new_admin_unit_grade_path(unit)
+    get new_unit_grade_path(unit)
     assert_response :success
     assert_match "Regular Member", response.body
     assert_no_match "Bianca Business", response.body
 
     assert_difference("Grade.count", 1) do
-      post admin_unit_grades_path(unit), params: {
+      post unit_grades_path(unit), params: {
         grade: {
           student_id: students(:member_student).id,
           awarded_on: "2026-03-25",
@@ -106,13 +109,13 @@ class AdminGradesFlowTest < ActionDispatch::IntegrationTest
     end
 
     grade = Grade.find_by!(student: students(:member_student), unit: unit, awarded_on: Date.new(2026, 3, 25))
-    assert_redirected_to admin_unit_path(unit)
+    assert_redirected_to unit_path(unit)
 
-    get admin_unit_grade_path(unit, grade)
+    get unit_grade_path(unit, grade)
     assert_response :success
     assert_no_match admin_person_path(people(:member_person)), response.body
 
-    patch admin_unit_grade_path(unit, grade), params: {
+    patch unit_grade_path(unit, grade), params: {
       grade: {
         student_id: students(:member_student).id,
         awarded_on: "2026-03-26",
@@ -120,15 +123,15 @@ class AdminGradesFlowTest < ActionDispatch::IntegrationTest
       }
     }
 
-    assert_redirected_to admin_unit_path(unit)
+    assert_redirected_to unit_path(unit)
     assert_equal BigDecimal("5.2"), grade.reload.value
 
     assert_difference("Grade.count", -1) do
-      delete admin_unit_grade_path(unit, grade)
+      delete unit_grade_path(unit, grade)
     end
 
     assert_no_difference("Grade.count") do
-      post admin_unit_grades_path(unit), params: {
+      post unit_grades_path(unit), params: {
         grade: {
           student_id: students(:business_student).id,
           awarded_on: "2026-03-27",

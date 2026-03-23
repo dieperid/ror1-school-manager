@@ -1,9 +1,12 @@
 module Admin
   class UnitsController < BaseController
     before_action :set_unit, only: %i[show edit update destroy]
+    before_action :redirect_collaborator_public_path!, only: %i[index show]
 
     def index
-      @units = accessible_units.includes(:learning_modules, :lectures).order(:name)
+      @units = accessible_units.includes(:learning_modules).order(:name)
+      @lecture_counts = Lecture.where(unit_id: @units.select(:id)).group(:unit_id).count
+      @grade_counts = Grade.where(unit_id: @units.select(:id)).group(:unit_id).count
     end
 
     def show
@@ -73,6 +76,13 @@ module Admin
       return @unit.grades if current_account.admin?
 
       @unit.grades.where(student_id: @unit.eligible_students.select(:id))
+    end
+
+    def redirect_collaborator_public_path!
+      return unless current_collaborator.present?
+      return unless request.path.start_with?("/admin/")
+
+      redirect_to(action_name == "index" ? units_path : unit_path(@unit))
     end
   end
 end

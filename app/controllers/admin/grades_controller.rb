@@ -5,6 +5,7 @@ module Admin
     before_action :set_grade, only: %i[show edit update destroy]
     before_action :load_form_dependencies, only: %i[new create edit update]
     before_action :ensure_prerequisites!, only: %i[new create]
+    before_action :redirect_collaborator_public_path!, only: %i[new show edit]
 
     def show
     end
@@ -17,7 +18,7 @@ module Admin
       ensure_selected_student_is_allowed!
 
       if @grade.errors.empty? && @grade.save
-        redirect_to admin_unit_path(@unit), notice: "Grade created."
+        redirect_to unit_path_for_current_account(@unit), notice: "Grade created."
       else
         render :new, status: :unprocessable_entity
       end
@@ -31,7 +32,7 @@ module Admin
       ensure_selected_student_is_allowed!
 
       if @grade.errors.empty? && @grade.save
-        redirect_to admin_unit_path(@unit), notice: "Grade updated."
+        redirect_to unit_path_for_current_account(@unit), notice: "Grade updated."
       else
         render :edit, status: :unprocessable_entity
       end
@@ -39,7 +40,7 @@ module Admin
 
     def destroy
       @grade.destroy!
-      redirect_to admin_unit_path(@unit), notice: "Grade deleted."
+      redirect_to unit_path_for_current_account(@unit), notice: "Grade deleted."
     end
 
     private
@@ -72,7 +73,7 @@ module Admin
 
     def ensure_prerequisites!
       if @students.empty?
-        redirect_to admin_unit_path(@unit), alert: "No eligible students are linked to this unit yet."
+        redirect_to unit_path_for_current_account(@unit), alert: "No eligible students are linked to this unit yet."
         return
       end
     end
@@ -94,6 +95,22 @@ module Admin
       return if @students.any? { |student| student.id == @grade.student_id }
 
       @grade.errors.add(:student, "must belong to a formation plan that includes this unit")
+    end
+
+    def redirect_collaborator_public_path!
+      return unless current_collaborator.present?
+      return unless request.path.start_with?("/admin/")
+
+      redirect_to(
+        case action_name
+        when "new"
+          new_unit_grade_path(@unit)
+        when "show"
+          unit_grade_path(@unit, @grade)
+        when "edit"
+          edit_unit_grade_path(@unit, @grade)
+        end
+      )
     end
 
     def grade_params

@@ -44,7 +44,7 @@
             <article class="calendar-lecture">
               <strong>
                 <% if current_collaborator.present? %>
-                  <%= link_to lecture.unit.name, admin_unit_path(lecture.unit) %>
+                  <%= link_to lecture.unit.name, unit_path_for_current_account(lecture.unit) %>
                 <% else %>
                   <%= lecture.unit.name %>
                 <% end %>
