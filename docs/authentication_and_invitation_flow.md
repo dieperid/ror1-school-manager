@@ -92,7 +92,8 @@ bin/rails db:seed
 In non-production environments, the seed uses these defaults if no environment variables are provided:
 
 - `ADMIN_EMAIL=admin@example.com`
-- `ADMIN_PASSWORD=ChangeMe123!`
+- `ADMIN_PASSWORD=pa$$w0rd`
+- `DEV_ACCOUNT_PASSWORD=pa$$w0rd`
 
 ### Production setup
 
@@ -128,6 +129,13 @@ Optional seed variables:
 Use the seeded admin account on the normal login page:
 
 - `/accounts/sign_in`
+
+Development seeds also create demo accounts for common roles:
+
+- `admin@example.com` / `pa$$w0rd`
+- `dean@example.com` / `pa$$w0rd`
+- `student@example.com` / `pa$$w0rd`
+- `teacher@example.com` / `pa$$w0rd`
 
 After login:
 

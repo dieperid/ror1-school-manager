@@ -1,7 +1,7 @@
 module Seeds
   module_function
 
-  DEV_PASSWORD = ENV.fetch("DEV_ACCOUNT_PASSWORD", "ChangeMe123!")
+  DEV_PASSWORD = ENV.fetch("DEV_ACCOUNT_PASSWORD", "pa$$w0rd")
 
   def upsert_person(avs_number:, **attributes)
     person = Person.find_or_initialize_by(avs_number: avs_number)
@@ -10,11 +10,11 @@ module Seeds
     person
   end
 
-  def upsert_account(person:, email:, admin:, enabled:, password:)
+  def upsert_account(person:, email:, admin:, enabled:, password:, reset_password: false)
     account = person.account || person.build_account
     account.assign_attributes(email: email, admin: admin, enabled: enabled)
 
-    if account.new_record?
+    if account.new_record? || reset_password
       account.password = password
       account.password_confirmation = password
     end

@@ -29,7 +29,8 @@ else
       email: admin_email,
       admin: true,
       enabled: true,
-      password: admin_password
+      password: admin_password,
+      reset_password: !Rails.env.production?
     )
     puts "Admin account ready for #{admin_email}."
   end

@@ -66,7 +66,8 @@ DB_PASSWORD=
 DB_NAME_DEVELOPMENT=ror1_school_manager_development
 DB_NAME_TEST=ror1_school_manager_test
 ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=ChangeMe123!
+ADMIN_PASSWORD=pa$$w0rd
+DEV_ACCOUNT_PASSWORD=pa$$w0rd
 ```
 
 Typical setup:
@@ -163,7 +164,16 @@ The app seeds an initial admin account.
 Default non-production credentials:
 
 - email: `admin@example.com`
-- password: `ChangeMe123!`
+- password: `pa$$w0rd`
+
+Development seeds also create these default accounts:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@example.com` | `pa$$w0rd` |
+| Dean | `dean@example.com` | `pa$$w0rd` |
+| Student | `student@example.com` | `pa$$w0rd` |
+| Teacher | `teacher@example.com` | `pa$$w0rd` |
 
 These can be changed with:
 

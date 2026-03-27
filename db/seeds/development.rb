@@ -18,6 +18,7 @@ departure_reasons = departure_reason_titles.index_with do |title|
 end
 
 collaborator_role_titles = [
+  "Dean",
   "Teacher",
   "Mentor",
   "Coordinator",
@@ -160,6 +161,16 @@ end
 manual_collaborators_by_plan = {
   "Informatics" => [
     {
+      key: "dana_dean",
+      avs_number: "756.1000.0000.08",
+      first_name: "Dana",
+      last_name: "Dean",
+      birth_date: Date.new(1984, 1, 15),
+      contract_begin: Date.new(2018, 8, 1),
+      roles: [ "Dean", "Program Lead" ],
+      email: "dean@example.com"
+    },
+    {
       key: "alice_mentor",
       avs_number: "756.1000.0000.01",
       first_name: "Alice",
@@ -167,7 +178,7 @@ manual_collaborators_by_plan = {
       birth_date: Date.new(1987, 3, 12),
       contract_begin: Date.new(2020, 8, 1),
       roles: [ "Teacher", "Mentor" ],
-      email: "alice.mentor@example.com"
+      email: "teacher@example.com"
     },
     {
       key: "claire_coordination",
@@ -271,7 +282,7 @@ manual_students_by_plan = {
       birth_date: Date.new(2006, 2, 14),
       admission_date: Date.new(2024, 8, 1),
       repeating_grade: false,
-      email: "sam.student@example.com"
+      email: "student@example.com"
     },
     {
       key: "tina_trainee",
@@ -455,7 +466,8 @@ collaborators = collaborator_blueprints.to_h do |blueprint|
     email: blueprint[:email],
     admin: false,
     enabled: true,
-    password: Seeds::DEV_PASSWORD
+    password: Seeds::DEV_PASSWORD,
+    reset_password: true
   )
 
   [ blueprint[:key], collaborator ]
@@ -475,7 +487,8 @@ students = student_blueprints.to_h do |blueprint|
     email: blueprint[:email],
     admin: false,
     enabled: true,
-    password: Seeds::DEV_PASSWORD
+    password: Seeds::DEV_PASSWORD,
+    reset_password: true
   )
 
   [ blueprint[:key], student ]
