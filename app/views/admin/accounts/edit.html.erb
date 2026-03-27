@@ -1,0 +1,20 @@
+<% content_for :title, "Edit Account" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Edit account for <%= @person.full_name %></h1>
+    <p>Update access, email, or set a new password.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "View account", admin_person_account_path(@person) %>
+    <%= link_to "View person", admin_person_path(@person) %>
+  </div>
+</section>
+
+<section class="card">
+  <%= render "form",
+             person: @person,
+             account: @account,
+             show_password_fields: true,
+             submit_label: "Save account" %>
+</section>

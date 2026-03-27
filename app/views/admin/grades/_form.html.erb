@@ -1,0 +1,30 @@
+<%= render "accounts/shared/error_messages", resource: grade %>
+
+<%= form_with model: grade,
+              url: grade.persisted? ? unit_grade_path_for_current_account(unit, grade) : (current_admin_or_dean? ? admin_unit_grades_path(unit) : unit_grades_path(unit)) do |form| %>
+  <div class="form-grid">
+    <div>
+      <%= form.label :student_id, "Student" %>
+      <%= form.collection_select :student_id, students, :id, :full_name, {}, { required: true } %>
+    </div>
+
+    <div>
+      <%= form.label :unit_id, "Unit" %>
+      <%= form.text_field :unit_id, value: unit.name, disabled: true %>
+    </div>
+
+    <div>
+      <%= form.label :awarded_on %>
+      <%= form.date_field :awarded_on, required: true %>
+    </div>
+
+    <div>
+      <%= form.label :value %>
+      <%= form.number_field :value, step: 0.1, min: 0, required: true %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit submit_label, class: "primary-button" %>
+  </div>
+<% end %>

@@ -1,0 +1,13 @@
+<% content_for :title, "New Unit" %>
+
+<section class="page-heading">
+  <div>
+    <h1>New unit</h1>
+    <p>Create a unit that can be attached to one or more learning modules.</p>
+  </div>
+  <%= link_to "Back to units", admin_units_path %>
+</section>
+
+<section class="card">
+  <%= render "form", unit: @unit, submit_label: "Create unit" %>
+</section>

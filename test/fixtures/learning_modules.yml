@@ -1,0 +1,9 @@
+web_fundamentals_module:
+  name: Web Fundamentals
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+business_process_module:
+  name: Business Processes
+  created_at: <%= 3.days.ago %>
+  updated_at: <%= 1.day.ago %>

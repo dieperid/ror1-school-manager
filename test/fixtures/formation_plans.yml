@@ -1,0 +1,9 @@
+informatics_plan:
+  name: Informatics
+  created_at: <%= 5.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+business_plan:
+  name: Business
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>

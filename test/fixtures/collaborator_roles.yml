@@ -1,0 +1,14 @@
+administrator_role:
+  title: Administrator
+  created_at: <%= 5.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+mentor_role:
+  title: Mentor
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+dean_role:
+  title: Dean
+  created_at: <%= 3.days.ago %>
+  updated_at: <%= 1.day.ago %>

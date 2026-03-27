@@ -1,0 +1,109 @@
+<% content_for :title, @formation_plan.name %>
+
+<section class="page-heading">
+  <div>
+    <h1><%= @formation_plan.name %></h1>
+    <p>Review the formation plan, its school classes, and the linked learning modules.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "Edit formation plan", edit_admin_formation_plan_path(@formation_plan), class: "primary-link" %>
+    <%= link_to "Back to formation plans", admin_formation_plans_path %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label">Name</span>
+      <strong><%= @formation_plan.name %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">School classes</span>
+      <strong><%= pluralize(@school_classes.size, "class") %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Learning modules</span>
+      <strong><%= pluralize(@learning_modules.size, "module") %></strong>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= link_to "New school class", new_admin_school_class_path(formation_plan_id: @formation_plan.id), class: "primary-link" %>
+    <%= link_to "New learning module", new_admin_learning_module_path(formation_plan_id: @formation_plan.id), class: "primary-link" %>
+    <%= button_to "Delete formation plan",
+                  admin_formation_plan_path(@formation_plan),
+                  method: :delete,
+                  class: "secondary-button",
+                  data: { turbo_confirm: "Delete #{@formation_plan.name}?" } %>
+  </div>
+</section>
+
+<section class="card">
+  <div class="page-heading">
+    <div>
+      <h2>Learning modules</h2>
+      <p>Modules currently linked to this formation plan.</p>
+    </div>
+  </div>
+
+  <% if @learning_modules.any? %>
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Units</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @learning_modules.each do |learning_module| %>
+          <tr>
+            <td><strong><%= learning_module.name %></strong></td>
+            <td><%= learning_module.units.map(&:name).presence&.join(", ") || "None" %></td>
+            <td>
+              <div><%= link_to "View", admin_learning_module_path(learning_module) %></div>
+              <div><%= link_to "Edit", edit_admin_learning_module_path(learning_module) %></div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No learning modules are linked to this formation plan yet.</p>
+  <% end %>
+</section>
+
+<section class="card">
+  <div class="page-heading">
+    <div>
+      <h2>School classes</h2>
+      <p>Classes currently linked to this formation plan.</p>
+    </div>
+  </div>
+
+  <% if @school_classes.any? %>
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Responsible collaborator</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @school_classes.each do |school_class| %>
+          <tr>
+            <td><strong><%= school_class.name %></strong></td>
+            <td><%= school_class.responsible_name %></td>
+            <td>
+              <div><%= link_to "View", admin_school_class_path(school_class) %></div>
+              <div><%= link_to "Edit", edit_admin_school_class_path(school_class) %></div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No school classes are linked to this formation plan yet.</p>
+  <% end %>
+</section>

@@ -1,0 +1,13 @@
+<% content_for :title, "New Room" %>
+
+<section class="page-heading">
+  <div>
+    <h1>New room</h1>
+    <p>Create a room that can later be assigned to lectures.</p>
+  </div>
+  <%= link_to "Back to rooms", admin_rooms_path %>
+</section>
+
+<section class="card">
+  <%= render "form", room: @room, submit_label: "Create room" %>
+</section>

@@ -1,0 +1,9 @@
+lab_a:
+  name: Lab A
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+room_b12:
+  name: Room B12
+  created_at: <%= 3.days.ago %>
+  updated_at: <%= 1.day.ago %>

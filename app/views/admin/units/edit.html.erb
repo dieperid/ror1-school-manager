@@ -1,0 +1,16 @@
+<% content_for :title, "Edit Unit" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Edit unit</h1>
+    <p>Update the unit name.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "View unit", admin_unit_path(@unit) %>
+    <%= link_to "Back to units", admin_units_path %>
+  </div>
+</section>
+
+<section class="card">
+  <%= render "form", unit: @unit, submit_label: "Save changes" %>
+</section>

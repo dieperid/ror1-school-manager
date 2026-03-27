@@ -1,0 +1,175 @@
+<% content_for :title, "My Profile" %>
+
+  <section class="page-heading">
+    <div>
+      <h1>My profile</h1>
+      <p>Review your personal information and account settings.</p>
+    </div>
+    <%= link_to "Edit profile" , edit_profile_path, class: "primary-link" %>
+  </section>
+
+  <section class="card stack">
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">Full name</span>
+        <strong>
+          <%= @person.full_name %>
+        </strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Email</span>
+        <strong>
+          <%= @account.email %>
+        </strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Role</span>
+        <strong>
+          <%= @person.role_label %>
+        </strong>
+      </div>
+      <% if @person.collaborator.present? %>
+        <div class="detail-item">
+          <span class="detail-label">Collaborator roles</span>
+          <strong>
+            <%= @person.collaborator.role_titles.presence&.join(", ") || " No roles assigned" %>
+          </strong>
+        </div>
+        <% end %>
+          <div class="detail-item">
+            <span class="detail-label">Birth date</span>
+            <strong>
+              <%= @person.birth_date.present? ? l(@person.birth_date) : "Not provided" %>
+            </strong>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Phone number</span>
+            <strong>
+              <%= @person.phone_number.presence || "Not provided" %>
+            </strong>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Address</span>
+            <strong>
+              <%= [@person.street, @person.street_number].compact.join(" ").presence || " Not provided" %>
+            </strong>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Postal code and city</span>
+            <strong>
+              <%= [@person.postal_code, @person.city].compact.join(" ").presence || " Not provided" %>
+            </strong>
+          </div>
+    </div>
+  </section>
+
+  <% if @person.collaborator.present? || @person.student.present? %>
+    <section class="card stack">
+      <div class="page-heading">
+        <div>
+          <h2>My schedule</h2>
+          <p>
+            <%= @person.collaborator.present? ? "This week at a glance, with the full month view one click away."
+              : "This week's lectures for your class, with the full month view one click away." %>
+          </p>
+        </div>
+        <%= link_to "Open full calendar" , schedule_path, class: "primary-link" %>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Current week</span>
+          <strong>
+            <%= "#{l(@schedule_week_range.begin)} - #{l(@schedule_week_range.end)}" %>
+          </strong>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Lectures this week</span>
+          <strong>
+            <%= pluralize(@weekly_schedule_lectures.size, "lecture" ) %>
+          </strong>
+        </div>
+      </div>
+
+      <div class="profile-week-calendar" role="list">
+        <% @schedule_week_dates.each do |date| %>
+          <% lectures = @weekly_schedule_lectures_by_date.fetch(date, []) %>
+          <section class="profile-week-day <%= "is-today" if date == Date.current %>" role="listitem">
+            <header class="profile-week-day-header">
+              <span class="profile-weekday-name">
+                <%= l(date, format: "%A") %>
+              </span>
+              <strong>
+                <%= l(date, format: "%d %b") %>
+              </strong>
+            </header>
+
+            <% if lectures.any? %>
+              <div class="calendar-lectures">
+                <% lectures.each do |lecture| %>
+                  <article class="calendar-lecture">
+                    <strong>
+                      <%= lecture.unit.name %>
+                    </strong>
+                    <div>
+                      <%= "#{lecture.start_time.strftime('%H:%M')} - #{lecture.end_time.strftime('%H:%M')}" %>
+                    </div>
+                    <div>
+                      <%= lecture.room.name %>
+                    </div>
+                    <% if @person.student.present? %>
+                      <div>
+                        <%= lecture.collaborator.full_name %>
+                      </div>
+                    <% end %>
+                  </article>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="calendar-empty">No lecture</p>
+            <% end %>
+          </section>
+        <% end %>
+      </div>
+    </section>
+    <% end %>
+
+      <% if @person.student.present? %>
+        <section class="card">
+          <div class="page-heading">
+            <div>
+              <h2>My grades</h2>
+              <p>Grades recorded for your units.</p>
+            </div>
+          </div>
+
+          <% if @student_grades.any? %>
+            <table class="people-table">
+              <thead>
+                <tr>
+                  <th>Unit</th>
+                  <th>Awarded on</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @student_grades.each do |grade| %>
+                  <tr>
+                    <td>
+                      <%= grade.unit.name %>
+                    </td>
+                    <td>
+                      <%= l(grade.awarded_on) %>
+                    </td>
+                    <td><strong>
+                        <%= grade.value %>
+                      </strong></td>
+                  </tr>
+                  <% end %>
+              </tbody>
+            </table>
+            <% else %>
+              <p>No grades have been recorded yet.</p>
+              <% end %>
+        </section>
+        <% end %>

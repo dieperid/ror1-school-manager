@@ -1,0 +1,72 @@
+<% content_for :title, "Dashboard" %>
+
+<% if current_admin_or_dean? %>
+  <section class="page-heading">
+    <div>
+      <h1>Management dashboard</h1>
+      <p>Manage the school directory, formation plans, classes, and academic follow-up from here.</p>
+    </div>
+  </section>
+
+  <section class="detail-grid">
+    <article class="card">
+      <h2>People</h2>
+      <p>Create people, manage linked accounts, and assign collaborator or student roles.</p>
+      <p><%= link_to "Manage people", admin_people_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>Collaborator roles</h2>
+      <p>Create the reusable collaborator roles that can later be assigned from a person record.</p>
+      <p><%= link_to "Manage collaborator roles", admin_collaborator_roles_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>Formation plans</h2>
+      <p>Create the plans that school classes will belong to.</p>
+      <p><%= link_to "Manage formation plans", admin_formation_plans_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>School classes</h2>
+      <p>Assign each class to a formation plan and a responsible collaborator.</p>
+      <p><%= link_to "Manage school classes", admin_school_classes_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>Learning modules</h2>
+      <p>Attach modules to formation plans and link the units they contain.</p>
+      <p><%= link_to "Manage learning modules", admin_learning_modules_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>Units</h2>
+      <p>Create reusable units and attach them to one or more learning modules.</p>
+      <p><%= link_to "Manage units", admin_units_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>Rooms</h2>
+      <p>Create rooms that can be used when planning lectures.</p>
+      <p><%= link_to "Manage rooms", admin_rooms_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>Lectures</h2>
+      <p>Schedule lectures by selecting a room, collaborator, unit, date, and time range.</p>
+      <p><%= link_to "Manage lectures", admin_lectures_path, class: "primary-link" %></p>
+    </article>
+
+    <article class="card">
+      <h2>Grades</h2>
+      <p>Record and review grades from the relevant unit page.</p>
+      <p><%= link_to "Browse units", admin_units_path, class: "primary-link" %></p>
+    </article>
+  </section>
+<% else %>
+  <section class="card">
+    <h1>My profile</h1>
+    <p>Review your personal information and update your account details.</p>
+    <p><%= link_to "Open my profile", profile_path, class: "primary-link" %></p>
+  </section>
+<% end %>

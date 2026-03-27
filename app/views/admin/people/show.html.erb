@@ -1,0 +1,197 @@
+<% content_for :title, @person.full_name %>
+
+<section class="page-heading">
+  <div>
+    <h1><%= @person.full_name %></h1>
+    <p>Manage the person record and the linked account from this page.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "Edit person", edit_admin_person_path(@person), class: "primary-link" %>
+    <%= link_to "Back to people", admin_people_path %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label">AVS number</span>
+      <strong><%= @person.avs_number %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Birth date</span>
+      <strong><%= @person.birth_date.present? ? l(@person.birth_date) : "Not provided" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Address</span>
+      <strong><%= [@person.street, @person.street_number].compact.join(" ").presence || "Not provided" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Postal code and city</span>
+      <strong><%= [@person.postal_code, @person.city].compact.join(" ").presence || "Not provided" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Phone number</span>
+      <strong><%= @person.phone_number.presence || "Not provided" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Role</span>
+      <strong><%= @person.role_label %></strong>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <% if @person != current_person && !(current_dean? && @person.account&.admin?) %>
+      <%= button_to "Delete person",
+                    admin_person_path(@person),
+                    method: :delete,
+                    class: "secondary-button",
+                    data: { turbo_confirm: "Delete #{@person.full_name} and any linked account?" } %>
+    <% end %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="page-heading">
+    <div>
+      <h2>Role details</h2>
+      <p>The role data depends on whether this person is registered as a collaborator or a student.</p>
+    </div>
+  </div>
+
+  <% if @person.collaborator.present? %>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">Role type</span>
+        <strong>Collaborator</strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Contract begin</span>
+        <strong><%= @person.collaborator.contract_begin.present? ? l(@person.collaborator.contract_begin) : "Not provided" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Contract end</span>
+        <strong><%= @person.collaborator.contract_end.present? ? l(@person.collaborator.contract_end) : "Not provided" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Collaborator roles</span>
+        <strong><%= @person.collaborator.role_titles.presence&.join(", ") || "No roles assigned" %></strong>
+      </div>
+    </div>
+  <% elsif @person.student.present? %>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">Role type</span>
+        <strong>Student</strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Admission date</span>
+        <strong><%= @person.student.admission_date.present? ? l(@person.student.admission_date) : "Not provided" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Departure date</span>
+        <strong><%= @person.student.departure_date.present? ? l(@person.student.departure_date) : "Not provided" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Departure reason</span>
+        <strong><%= @person.student.departure_reason&.title || "Not provided" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Repeating grade</span>
+        <strong><%= @person.student.repeating_grade? ? "Yes" : "No" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Grades</span>
+        <strong><%= pluralize(@person.student.grades.size, "grade") %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">School classes</span>
+        <strong><%= @person.student.school_class_names.presence&.join(", ") || "No class enrollment" %></strong>
+      </div>
+    </div>
+  <% else %>
+    <p>No collaborator or student role is assigned yet.</p>
+  <% end %>
+</section>
+
+<% if @person.student.present? %>
+  <section class="card">
+    <div class="page-heading">
+      <div>
+        <h2>Grades</h2>
+        <p>Grades recorded for this student. Manage them from the relevant unit page.</p>
+      </div>
+      <%= link_to "Download report card (.txt)", admin_person_report_card_path(@person, format: :txt), class: "primary-link" %>
+    </div>
+
+    <% if @person.student.grades.any? %>
+      <table class="people-table">
+        <thead>
+          <tr>
+            <th>Unit</th>
+            <th>Awarded on</th>
+            <th>Value</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @person.student.grades.includes(:unit).order(awarded_on: :desc, created_at: :desc).each do |grade| %>
+            <tr>
+              <td><%= link_to grade.unit.name, admin_unit_path(grade.unit) %></td>
+              <td><%= l(grade.awarded_on) %></td>
+              <td><strong><%= grade.value %></strong></td>
+              <td><%= link_to "Open unit", admin_unit_path(grade.unit) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No grades recorded for this student yet.</p>
+    <% end %>
+  </section>
+<% end %>
+
+<section class="card stack">
+  <div class="page-heading">
+    <div>
+      <h2>Linked account</h2>
+      <p>Create, edit, invite, or remove the account associated with this person.</p>
+    </div>
+  </div>
+
+  <% if @person.account.present? %>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">Email</span>
+        <strong><%= @person.account.email %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Access level</span>
+        <strong><%= @person.account.access_label %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Status</span>
+        <strong><%= @person.account.enabled? ? "Enabled" : "Disabled" %></strong>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Invitation file</span>
+        <strong><%= @person.account.invited_at.present? ? l(@person.account.invited_at, format: :long) : "Not generated yet" %></strong>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <%= link_to "View account", admin_person_account_path(@person) %>
+      <%= link_to "Edit account", edit_admin_person_account_path(@person) %>
+      <%= link_to "Download invite (.txt)", admin_person_account_invitation_path(@person, format: :txt) %>
+      <% if @person.account != current_account && !(current_dean? && @person.account.admin?) %>
+        <%= button_to "Delete account",
+                      admin_person_account_path(@person),
+                      method: :delete,
+                      class: "secondary-button",
+                      data: { turbo_confirm: "Delete the linked account for #{@person.full_name}?" } %>
+      <% end %>
+    </div>
+  <% else %>
+    <p>No linked account yet.</p>
+    <p><%= link_to "Create account", new_admin_person_account_path(@person), class: "primary-link" %></p>
+  <% end %>
+</section>

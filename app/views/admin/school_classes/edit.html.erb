@@ -1,0 +1,22 @@
+<% content_for :title, "Edit School Class" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Edit school class</h1>
+    <p>Update the class name, formation plan, and responsible collaborator.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "View school class", admin_school_class_path(@school_class) %>
+    <%= link_to "Back to school classes", admin_school_classes_path %>
+  </div>
+</section>
+
+<section class="card">
+  <%= render "form",
+             school_class: @school_class,
+             formation_plans: @formation_plans,
+             responsible_collaborators: @responsible_collaborators,
+             students: @students,
+             selected_student_ids: @selected_student_ids,
+             submit_label: "Save changes" %>
+</section>

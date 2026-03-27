@@ -1,0 +1,44 @@
+<% content_for :title, "Account" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Account for <%= @person.full_name %></h1>
+    <p>Review access settings and manage invitation downloads.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "Edit account", edit_admin_person_account_path(@person), class: "primary-link" %>
+    <%= link_to "View person", admin_person_path(@person) %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label">Email</span>
+      <strong><%= @account.email %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Access level</span>
+      <strong><%= @account.access_label %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Status</span>
+      <strong><%= @account.enabled? ? "Enabled" : "Disabled" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Invitation file</span>
+      <strong><%= @account.invited_at.present? ? l(@account.invited_at, format: :long) : "Not generated yet" %></strong>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= link_to "Download invite (.txt)", admin_person_account_invitation_path(@person, format: :txt) %>
+    <% if @account != current_account && !(current_dean? && @account.admin?) %>
+      <%= button_to "Delete account",
+                    admin_person_account_path(@person),
+                    method: :delete,
+                    class: "secondary-button",
+                    data: { turbo_confirm: "Delete the account for #{@person.full_name}?" } %>
+    <% end %>
+  </div>
+</section>

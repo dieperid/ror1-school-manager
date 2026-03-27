@@ -1,0 +1,27 @@
+<% if pagination.total_pages > 1 %>
+  <nav class="pagination-nav" aria-label="Pagination">
+    <p class="pagination-summary">
+      Showing <%= pagination.first_item_number %>-<%= pagination.last_item_number %> of <%= pagination.total_count %>
+    </p>
+
+    <div class="pagination-links">
+      <% if pagination.previous_page.present? %>
+        <%= link_to "Previous", pagination_path_for(pagination.previous_page), class: "secondary-button" %>
+      <% end %>
+
+      <% pagination_page_items(pagination).each do |item| %>
+        <% if item == :gap %>
+          <span class="pagination-gap">...</span>
+        <% elsif item == pagination.current_page %>
+          <span class="pagination-page pagination-page-current"><%= item %></span>
+        <% else %>
+          <%= link_to item, pagination_path_for(item), class: "pagination-page" %>
+        <% end %>
+      <% end %>
+
+      <% if pagination.next_page.present? %>
+        <%= link_to "Next", pagination_path_for(pagination.next_page), class: "secondary-button" %>
+      <% end %>
+    </div>
+  </nav>
+<% end %>

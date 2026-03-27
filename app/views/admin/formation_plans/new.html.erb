@@ -1,0 +1,13 @@
+<% content_for :title, "New Formation Plan" %>
+
+<section class="page-heading">
+  <div>
+    <h1>New formation plan</h1>
+    <p>Create a formation plan that school classes can be attached to.</p>
+  </div>
+  <%= link_to "Back to formation plans", admin_formation_plans_path %>
+</section>
+
+<section class="card">
+  <%= render "form", formation_plan: @formation_plan, submit_label: "Create formation plan" %>
+</section>

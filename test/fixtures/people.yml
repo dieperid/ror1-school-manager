@@ -1,0 +1,90 @@
+admin_person:
+  avs_number: "756.0000.0000.01"
+  first_name: "System"
+  last_name: "Administrator"
+  city: "Lausanne"
+  birth_date: 1990-01-01
+  postal_code: "1000"
+  street: "Admin Street"
+  street_number: 1
+  phone_number: "0790000000"
+  created_at: <%= 5.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+member_person:
+  avs_number: "756.0000.0000.02"
+  first_name: "Regular"
+  last_name: "Member"
+  city: "Geneva"
+  birth_date: 1995-06-10
+  postal_code: "1200"
+  street: "Lake Road"
+  street_number: 8
+  phone_number: "0780000000"
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+unlinked_person:
+  avs_number: "756.0000.0000.04"
+  first_name: "Pending"
+  last_name: "Person"
+  city: "Fribourg"
+  birth_date: 1998-03-20
+  postal_code: "1700"
+  street: "Station Road"
+  street_number: 4
+  phone_number: "0760000000"
+  created_at: <%= 3.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+teacher_person:
+  avs_number: "756.0000.0000.05"
+  first_name: "Taylor"
+  last_name: "Teacher"
+  city: "Sion"
+  birth_date: 1988-09-12
+  postal_code: "1950"
+  street: "Campus Way"
+  street_number: 3
+  phone_number: "0771111111"
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+outsider_person:
+  avs_number: "756.0000.0000.06"
+  first_name: "Olivia"
+  last_name: "Outside"
+  city: "Montreux"
+  birth_date: 1987-02-08
+  postal_code: "1820"
+  street: "Harbor Lane"
+  street_number: 12
+  phone_number: "0772222222"
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+dean_person:
+  avs_number: "756.0000.0000.08"
+  first_name: "Dana"
+  last_name: "Dean"
+  city: "Vevey"
+  birth_date: 1986-11-03
+  postal_code: "1800"
+  street: "College Avenue"
+  street_number: 9
+  phone_number: "0785556666"
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
+business_student_person:
+  avs_number: "756.0000.0000.07"
+  first_name: "Bianca"
+  last_name: "Business"
+  city: "Lausanne"
+  birth_date: 2005-04-18
+  postal_code: "1003"
+  street: "Market Street"
+  street_number: 7
+  phone_number: "0783334444"
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>

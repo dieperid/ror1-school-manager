@@ -1,0 +1,65 @@
+<% content_for :title, "My Schedule" %>
+
+<section class="page-heading">
+  <div>
+    <h1>My schedule</h1>
+    <p><%= current_collaborator.present? ? "Review your lectures in a monthly calendar." : "Review the lectures linked to your class formation plan." %></p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "Today", schedule_path(start_date: Date.current), class: "primary-link" %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label"><%= @schedule_role_label %></span>
+      <strong><%= @schedule_owner_name %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Month</span>
+      <strong><%= @start_date.strftime("%B %Y") %></strong>
+    </div>
+    <% if @formation_plan_names.any? %>
+      <div class="detail-item">
+        <span class="detail-label">Formation plans</span>
+        <strong><%= @formation_plan_names.join(", ") %></strong>
+      </div>
+    <% end %>
+    <div class="detail-item">
+      <span class="detail-label">Lectures</span>
+      <strong><%= pluralize(@lectures.size, "lecture") %></strong>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <%= month_calendar(events: @lectures, attribute: :date, end_attribute: :date, start_date: @start_date) do |date, lectures| %>
+    <div class="schedule-day">
+      <div class="schedule-day-number"><%= date.day %></div>
+
+      <% if lectures.any? %>
+        <div class="calendar-lectures">
+          <% lectures.each do |lecture| %>
+            <article class="calendar-lecture">
+              <strong>
+                <% if current_collaborator.present? %>
+                  <%= link_to lecture.unit.name, unit_path_for_current_account(lecture.unit) %>
+                <% else %>
+                  <%= lecture.unit.name %>
+                <% end %>
+              </strong>
+              <div><%= "#{lecture.start_time.strftime('%H:%M')} - #{lecture.end_time.strftime('%H:%M')}" %></div>
+              <div><%= lecture.room.name %></div>
+              <% if current_student.present? %>
+                <div><%= lecture.collaborator.full_name %></div>
+              <% end %>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="calendar-empty">No lecture</p>
+      <% end %>
+    </div>
+  <% end %>
+</section>

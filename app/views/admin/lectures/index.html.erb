@@ -1,0 +1,55 @@
+<% content_for :title, "Lectures" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Lectures</h1>
+    <p>Manage scheduled lectures, including room, unit, and responsible collaborator.</p>
+  </div>
+  <%= link_to "New lecture", new_admin_lecture_path, class: "primary-link" %>
+</section>
+
+<% if @lectures.any? %>
+  <div class="card">
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Unit</th>
+          <th>Room</th>
+          <th>Collaborator</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @lectures.each do |lecture| %>
+          <tr>
+            <td><%= l(lecture.date) %></td>
+            <td><%= "#{lecture.start_time.strftime('%H:%M')} - #{lecture.end_time.strftime('%H:%M')}" %></td>
+            <td><%= lecture.unit.name %></td>
+            <td><%= lecture.room.name %></td>
+            <td><%= lecture.collaborator.full_name %></td>
+            <td>
+              <div><%= link_to "View", admin_lecture_path(lecture) %></div>
+              <div><%= link_to "Edit", edit_admin_lecture_path(lecture) %></div>
+              <div>
+                <%= button_to "Delete",
+                              admin_lecture_path(lecture),
+                              method: :delete,
+                              class: "secondary-button",
+                              data: { turbo_confirm: "Delete this lecture?" } %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= render "shared/pagination", pagination: @pagination %>
+  </div>
+<% else %>
+  <section class="card">
+    <h2>No lectures yet</h2>
+    <p>Create rooms, units, and collaborators first, then schedule the first lecture.</p>
+  </section>
+<% end %>

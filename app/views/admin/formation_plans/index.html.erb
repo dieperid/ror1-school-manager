@@ -1,0 +1,51 @@
+<% content_for :title, "Formation Plans" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Formation plans</h1>
+    <p>Manage the school formation plans, attached classes, and linked modules.</p>
+  </div>
+  <%= link_to "New formation plan", new_admin_formation_plan_path, class: "primary-link" %>
+</section>
+
+<% if @formation_plans.any? %>
+  <div class="card">
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>School classes</th>
+          <th>Modules</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @formation_plans.each do |formation_plan| %>
+          <tr>
+            <td><strong><%= formation_plan.name %></strong></td>
+            <td><%= pluralize(formation_plan.class_count, "class") %></td>
+            <td><%= pluralize(formation_plan.module_count, "module") %></td>
+            <td>
+              <div><%= link_to "View", admin_formation_plan_path(formation_plan) %></div>
+              <div><%= link_to "Edit", edit_admin_formation_plan_path(formation_plan) %></div>
+              <div>
+                <%= button_to "Delete",
+                              admin_formation_plan_path(formation_plan),
+                              method: :delete,
+                              class: "secondary-button",
+                              data: { turbo_confirm: "Delete #{formation_plan.name}?" } %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= render "shared/pagination", pagination: @pagination %>
+  </div>
+<% else %>
+  <section class="card">
+    <h2>No formation plans yet</h2>
+    <p>Create the first formation plan before creating school classes or attaching learning modules.</p>
+  </section>
+<% end %>

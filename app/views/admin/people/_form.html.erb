@@ -1,0 +1,180 @@
+<%= render "accounts/shared/error_messages" , resource: person %>
+
+  <%= form_with model: [:admin, person], data: { turbo: false } do |form| %>
+    <div class="form-grid">
+      <div>
+        <%= form.label :first_name %>
+          <%= form.text_field :first_name, required: true %>
+      </div>
+
+      <div>
+        <%= form.label :last_name %>
+          <%= form.text_field :last_name, required: true %>
+      </div>
+
+      <div>
+        <%= form.label :avs_number %>
+          <%= form.text_field :avs_number, required: true %>
+      </div>
+
+      <div>
+        <%= form.label :birth_date %>
+          <%= form.date_field :birth_date %>
+      </div>
+
+      <div>
+        <%= form.label :street %>
+          <%= form.text_field :street %>
+      </div>
+
+      <div>
+        <%= form.label :street_number %>
+          <%= form.number_field :street_number, min: 1 %>
+      </div>
+
+      <div>
+        <%= form.label :postal_code %>
+          <%= form.text_field :postal_code %>
+      </div>
+
+      <div>
+        <%= form.label :city %>
+          <%= form.text_field :city %>
+      </div>
+
+      <div>
+        <%= form.label :phone_number %>
+          <%= form.telephone_field :phone_number %>
+      </div>
+    </div>
+
+    <fieldset class="account-fieldset">
+      <legend>Person role</legend>
+
+      <div class="form-grid">
+        <div class="checkbox-row">
+          <%= radio_button_tag "person[role_type]" , "none" , role_type=="none" %>
+            <%= label_tag "person_role_type_none" , "No role yet" %>
+        </div>
+
+        <div class="checkbox-row">
+          <%= radio_button_tag "person[role_type]" , "collaborator" , role_type=="collaborator" %>
+            <%= label_tag "person_role_type_collaborator" , "Collaborator" %>
+        </div>
+
+        <div class="checkbox-row">
+          <%= radio_button_tag "person[role_type]" , "student" , role_type=="student" %>
+            <%= label_tag "person_role_type_student" , "Student" %>
+        </div>
+      </div>
+
+      <p class="form-hint">A person can have one active role in this interface. Switching the role replaces the previous
+        subtype record.</p>
+    </fieldset>
+
+    <fieldset class="account-fieldset">
+      <legend>Collaborator details</legend>
+
+      <div class="form-grid">
+        <div>
+          <%= label_tag "collaborator_contract_begin" , "Contract begin" %>
+            <%= date_field_tag "collaborator[contract_begin]" , collaborator_record.contract_begin %>
+        </div>
+
+        <div>
+          <%= label_tag "collaborator_contract_end" , "Contract end" %>
+            <%= date_field_tag "collaborator[contract_end]" , collaborator_record.contract_end %>
+        </div>
+      </div>
+
+      <div>
+        <span class="detail-label">Assigned collaborator roles</span>
+
+        <% if collaborator_roles.any? %>
+          <div class="form-grid">
+            <%= hidden_field_tag "collaborator[collaborator_role_ids][]" , "" , id: nil %>
+
+              <% collaborator_roles.each do |collaborator_role| %>
+                <div class="checkbox-row">
+                  <%= check_box_tag "collaborator[collaborator_role_ids][]" , collaborator_role.id,
+                    selected_collaborator_role_ids.include?(collaborator_role.id),
+                    id: "collaborator_role_#{collaborator_role.id}" %>
+                    <%= label_tag "collaborator_role_#{collaborator_role.id}" , collaborator_role.title %>
+                </div>
+                <% end %>
+          </div>
+
+          <p class="form-hint">
+            Need another role?
+            <%= link_to "Create a collaborator role" , new_admin_collaborator_role_path, target: "_blank" ,
+              rel: "noreferrer" %>
+              and then come back here to assign it.
+          </p>
+          <% else %>
+            <p>
+              No collaborator roles exist yet.
+              <%= link_to "Create the first collaborator role" , new_admin_collaborator_role_path, target: "_blank" ,
+                rel: "noreferrer" %>.
+            </p>
+            <% end %>
+      </div>
+
+      <p class="form-hint">These fields are used only when the collaborator role is selected.</p>
+    </fieldset>
+
+    <fieldset class="account-fieldset">
+      <legend>Student details</legend>
+
+      <div class="form-grid">
+        <div>
+          <%= label_tag "student_admission_date" , "Admission date" %>
+            <%= date_field_tag "student[admission_date]" , student_record.admission_date %>
+        </div>
+
+        <div>
+          <%= label_tag "student_departure_date" , "Departure date" %>
+            <%= date_field_tag "student[departure_date]" , student_record.departure_date %>
+        </div>
+
+        <div>
+          <%= label_tag "student_departure_reason_id" , "Departure reason" %>
+            <%= select_tag "student[departure_reason_id]" , options_from_collection_for_select(departure_reasons, :id,
+              :title, student_record.departure_reason_id), include_blank: "None" %>
+        </div>
+
+        <div class="checkbox-row">
+          <%= hidden_field_tag "student[repeating_grade]" , "0" %>
+            <%= check_box_tag "student[repeating_grade]" , "1" , student_record.repeating_grade %>
+              <%= label_tag "student_repeating_grade" , "Repeating grade" %>
+        </div>
+      </div>
+
+      <p class="form-hint">These fields are used only when the student role is selected.</p>
+    </fieldset>
+
+    <% if show_account_fields %>
+      <fieldset class="account-fieldset">
+        <legend>Optional account</legend>
+
+        <div class="form-grid">
+          <div>
+            <%= label_tag "account_email" , "Email" %>
+              <%= email_field_tag "account[email]" , account_email, autocomplete: "email" %>
+          </div>
+
+          <div class="checkbox-row">
+            <%= hidden_field_tag "account[admin]" , "0" %>
+              <%= check_box_tag "account[admin]" , "1" , account_admin %>
+                <%= label_tag "account_admin" , "Grant admin access" %>
+          </div>
+        </div>
+
+        <p class="form-hint">When an email is present, the app creates the linked account and downloads a text file with
+          the username and password setup link.</p>
+      </fieldset>
+      <% end %>
+
+        <div class="form-actions">
+          <%= form.submit submit_label, class: "primary-button" %>
+        </div>
+        <% end %>

@@ -1,0 +1,53 @@
+<% content_for :title, "School Classes" %>
+
+<section class="page-heading">
+  <div>
+    <h1>School classes</h1>
+    <p>Manage classes, the formation plan they belong to, and the responsible collaborator.</p>
+  </div>
+  <%= link_to "New school class", new_admin_school_class_path, class: "primary-link" %>
+</section>
+
+<% if @school_classes.any? %>
+  <div class="card">
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Formation plan</th>
+          <th>Responsible collaborator</th>
+          <th>Students</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @school_classes.each do |school_class| %>
+          <tr>
+            <td><strong><%= school_class.name %></strong></td>
+            <td><%= school_class.formation_plan.name %></td>
+            <td><%= school_class.responsible_name %></td>
+            <td><%= pluralize(school_class.student_count, "student") %></td>
+            <td>
+              <div><%= link_to "View", admin_school_class_path(school_class) %></div>
+              <div><%= link_to "Edit", edit_admin_school_class_path(school_class) %></div>
+              <div>
+                <%= button_to "Delete",
+                              admin_school_class_path(school_class),
+                              method: :delete,
+                              class: "secondary-button",
+                              data: { turbo_confirm: "Delete #{school_class.name}?" } %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= render "shared/pagination", pagination: @pagination %>
+  </div>
+<% else %>
+  <section class="card">
+    <h2>No school classes yet</h2>
+    <p>Create a formation plan and a collaborator first, then create the first school class.</p>
+  </section>
+<% end %>

@@ -1,0 +1,45 @@
+<% content_for :title, "Lecture" %>
+
+<section class="page-heading">
+  <div>
+    <h1>Lecture</h1>
+    <p>Review the scheduling details for this lecture.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "Edit lecture", edit_admin_lecture_path(@lecture), class: "primary-link" %>
+    <%= link_to "Back to lectures", admin_lectures_path %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label">Date</span>
+      <strong><%= l(@lecture.date) %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Time</span>
+      <strong><%= "#{@lecture.start_time.strftime('%H:%M')} - #{@lecture.end_time.strftime('%H:%M')}" %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Room</span>
+      <strong><%= link_to @lecture.room.name, admin_room_path(@lecture.room) %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Unit</span>
+      <strong><%= link_to @lecture.unit.name, admin_unit_path(@lecture.unit) %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Collaborator</span>
+      <strong><%= link_to @lecture.collaborator.full_name, admin_person_path(@lecture.collaborator.person) %></strong>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= button_to "Delete lecture",
+                  admin_lecture_path(@lecture),
+                  method: :delete,
+                  class: "secondary-button",
+                  data: { turbo_confirm: "Delete this lecture?" } %>
+  </div>
+</section>

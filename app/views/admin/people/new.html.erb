@@ -1,0 +1,16 @@
+<% content_for :title, "New Person" %>
+
+  <section class="page-heading">
+    <div>
+      <h1>New person</h1>
+      <p>Create a person first, then optionally create the linked account in the same action.</p>
+    </div>
+    <%= link_to "Back to people" , admin_people_path %>
+  </section>
+
+  <section class="card">
+    <%= render "form" , person: @person, show_account_fields: true, account_email: @account_email, account_admin:
+      @account_admin, role_type: @person_role_type, collaborator_record: @collaborator_form, collaborator_roles:
+      @collaborator_roles, selected_collaborator_role_ids: @selected_collaborator_role_ids, student_record:
+      @student_form, departure_reasons: @departure_reasons, submit_label: "Create person" %>
+  </section>

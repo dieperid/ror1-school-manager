@@ -1,0 +1,76 @@
+<% content_for :title, @school_class.name %>
+
+<section class="page-heading">
+  <div>
+    <h1><%= @school_class.name %></h1>
+    <p>Review the class assignment, responsible collaborator, and enrolled students.</p>
+  </div>
+  <div class="form-actions">
+    <%= link_to "Edit school class", edit_admin_school_class_path(@school_class), class: "primary-link" %>
+    <%= link_to "Back to school classes", admin_school_classes_path %>
+  </div>
+</section>
+
+<section class="card stack">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <span class="detail-label">Name</span>
+      <strong><%= @school_class.name %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Formation plan</span>
+      <strong><%= link_to @school_class.formation_plan.name, admin_formation_plan_path(@school_class.formation_plan) %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Responsible collaborator</span>
+      <strong><%= @school_class.responsible_name %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Responsible person record</span>
+      <strong><%= link_to @school_class.responsible_collaborator.person.full_name, admin_person_path(@school_class.responsible_collaborator.person) %></strong>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Enrolled students</span>
+      <strong><%= pluralize(@students.size, "student") %></strong>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= link_to "Edit enrollments", edit_admin_school_class_path(@school_class), class: "primary-link" %>
+    <%= button_to "Delete school class",
+                  admin_school_class_path(@school_class),
+                  method: :delete,
+                  class: "secondary-button",
+                  data: { turbo_confirm: "Delete #{@school_class.name}?" } %>
+  </div>
+</section>
+
+<section class="card">
+  <div class="page-heading">
+    <div>
+      <h2>Enrolled students</h2>
+      <p>Students linked to this class through the enrollment table.</p>
+    </div>
+  </div>
+
+  <% if @students.any? %>
+    <table class="people-table">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @students.each do |student| %>
+          <tr>
+            <td><strong><%= student.full_name %></strong></td>
+            <td><%= link_to "View person", admin_person_path(student.person) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No students are enrolled in this class yet.</p>
+  <% end %>
+</section>
