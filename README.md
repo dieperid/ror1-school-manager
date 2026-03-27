@@ -282,6 +282,7 @@ Additional documentation is available here:
 - [Authentication and invitation flow](docs/authentication_and_invitation_flow.md)
 - [Grades process](docs/grades_process.md)
 - [Role-based app flows](docs/role_based_app_flows.md)
+- [Application architecture](docs/application_architecture.md)
 
 ## Deployment Notes
 
