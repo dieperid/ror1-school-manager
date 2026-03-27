@@ -1,67 +1,77 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= content_for(:title) || "Ror1 School Manager" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Ror1 School Manager">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
+
+<head>
+  <title>
+    <%= content_for(:title) || "Ror1 School Manager" %>
+  </title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Ror1 School Manager">
+  <meta name="mobile-web-app-capable" content="yes">
+  <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "application", "data-turbo-track" => "reload" %>
-    <%= javascript_importmap_tags %>
-    <%= yield :head %>
+      <%= stylesheet_link_tag "application" , "data-turbo-track"=> "reload" %>
+        <%= javascript_importmap_tags %>
+          <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+            <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+              <%#= tag.link rel: "manifest" , href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-  </head>
+                <link rel="icon" href="/icon.png" type="image/png">
+                <link rel="icon" href="/icon.svg" type="image/svg+xml">
+                <link rel="apple-touch-icon" href="/icon.png">
+</head>
 
-  <body>
-    <header class="topbar">
-      <div>
-        <%= link_to "Ror1 School Manager", root_path, class: "brand" %>
-      </div>
+<body>
+  <header class="topbar">
+    <div>
+      <%= link_to "Ror1 School Manager" , root_path, class: "brand" %>
+    </div>
 
-      <% if account_signed_in? %>
-        <nav class="topbar-actions">
-          <% if current_account.admin? %>
-            <%= link_to "People", admin_people_path %>
-            <%= link_to "Formation plans", admin_formation_plans_path %>
-            <%= link_to "School classes", admin_school_classes_path %>
-            <%= link_to "Learning modules", admin_learning_modules_path %>
-            <%= link_to "Rooms", admin_rooms_path %>
-            <%= link_to "Lectures", admin_lectures_path %>
+    <% if account_signed_in? %>
+      <nav class="topbar-actions">
+        <% if current_account.admin? %>
+          <%= link_to "People" , admin_people_path %>
+            <%= link_to "Collaborator roles" , admin_collaborator_roles_path %>
+              <%= link_to "Formation plans" , admin_formation_plans_path %>
+                <%= link_to "School classes" , admin_school_classes_path %>
+                  <%= link_to "Learning modules" , admin_learning_modules_path %>
+                    <%= link_to "Rooms" , admin_rooms_path %>
+                      <%= link_to "Lectures" , admin_lectures_path %>
+                        <% end %>
+
+                          <% if current_account.admin? || current_collaborator.present? %>
+                            <%= link_to "Units" , units_path_for_current_account %>
+                              <% end %>
+
+                                <% if current_collaborator.present? || current_student.present? %>
+                                  <%= link_to "My schedule" , schedule_path %>
+                                    <% end %>
+
+                                      <%= link_to "My profile" , profile_path %>
+                                        <span>Hello <%= current_person.full_name %></span>
+                                        <%= button_to "Log out" , destroy_account_session_path, method: :delete,
+                                          class: "secondary-button" %>
+      </nav>
+      <% end %>
+  </header>
+
+  <main class="page-shell">
+    <% if notice.present? %>
+      <p class="flash flash-notice">
+        <%= notice %>
+      </p>
+      <% end %>
+
+        <% if alert.present? %>
+          <p class="flash flash-alert">
+            <%= alert %>
+          </p>
           <% end %>
 
-          <% if current_account.admin? || current_collaborator.present? %>
-            <%= link_to "Units", units_path_for_current_account %>
-          <% end %>
+            <%= yield %>
+  </main>
+</body>
 
-          <% if current_collaborator.present? || current_student.present? %>
-            <%= link_to "My schedule", schedule_path %>
-          <% end %>
-
-          <%= link_to "My profile", profile_path %>
-          <span>Hello <%= current_person.full_name %></span>
-          <%= button_to "Log out", destroy_account_session_path, method: :delete, class: "secondary-button" %>
-        </nav>
-      <% end %>
-    </header>
-
-    <main class="page-shell">
-      <% if notice.present? %>
-        <p class="flash flash-notice"><%= notice %></p>
-      <% end %>
-
-      <% if alert.present? %>
-        <p class="flash flash-alert"><%= alert %></p>
-      <% end %>
-
-      <%= yield %>
-    </main>
-  </body>
 </html>

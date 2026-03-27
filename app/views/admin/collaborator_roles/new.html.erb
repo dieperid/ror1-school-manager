@@ -1,0 +1,13 @@
+<% content_for :title, "New Collaborator Role" %>
+
+  <section class="page-heading">
+    <div>
+      <h1>New collaborator role</h1>
+      <p>Create a reusable collaborator role that can be assigned from the people form.</p>
+    </div>
+    <%= link_to "Back to collaborator roles" , admin_collaborator_roles_path %>
+  </section>
+
+  <section class="card">
+    <%= render "form" , collaborator_role: @collaborator_role, submit_label: "Create collaborator role" %>
+  </section>

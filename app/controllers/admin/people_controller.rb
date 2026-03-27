@@ -69,8 +69,6 @@ module Admin
       @collaborator_form = @person.collaborator || Collaborator.new(person: @person)
       @student_form = @person.student || Student.new(person: @person, repeating_grade: false)
       @selected_collaborator_role_ids = selected_collaborator_role_ids
-      @new_collaborator_role_titles = new_collaborator_role_titles
-
       return unless assign_role_attributes
 
       @collaborator_form.assign_attributes(collaborator_attributes_for_assignment)
@@ -96,7 +94,7 @@ module Admin
     end
 
     def collaborator_form_params
-      params.fetch(:collaborator, {}).permit(:contract_begin, :contract_end, :new_role_titles, collaborator_role_ids: [])
+      params.fetch(:collaborator, {}).permit(:contract_begin, :contract_end, collaborator_role_ids: [])
     end
 
     def student_params
@@ -122,12 +120,12 @@ module Admin
 
     def role_filter_options
       [
-        ["All roles", "all"],
-        ["Admin accounts", "admin_account"],
-        ["Collaborators", "collaborator"],
-        ["Students", "student"],
-        ["No role", "none"]
-      ] + CollaboratorRole.order(:title).pluck(:title, :id).map { |title, id| ["Collaborator role: #{title}", "collaborator_role:#{id}"] }
+        [ "All roles", "all" ],
+        [ "Admin accounts", "admin_account" ],
+        [ "Collaborators", "collaborator" ],
+        [ "Students", "student" ],
+        [ "No role", "none" ]
+      ] + CollaboratorRole.order(:title).pluck(:title, :id).map { |title, id| [ "Collaborator role: #{title}", "collaborator_role:#{id}" ] }
     end
 
     def collaborator_role_filter_id
@@ -282,48 +280,17 @@ module Admin
       Array(ids).reject(&:blank?).map(&:to_i).uniq
     end
 
-    def new_collaborator_role_titles
-      return collaborator_form_params[:new_role_titles].to_s if params[:collaborator].present?
-
-      ""
-    end
-
-    def parsed_new_collaborator_role_titles
-      new_collaborator_role_titles.split(/[\n,;]+/).map(&:strip).reject(&:blank?).each_with_object([]) do |title, titles|
-        titles << title unless titles.any? { |existing_title| existing_title.casecmp?(title) }
-      end
-    end
-
     def collaborator_roles_request_valid?
-      valid = true
       existing_ids = CollaboratorRole.where(id: selected_collaborator_role_ids).pluck(:id)
 
-      if existing_ids.sort != selected_collaborator_role_ids.sort
-        @person.errors.add(:base, "One or more collaborator roles are invalid")
-        valid = false
-      end
+      return true if existing_ids.sort == selected_collaborator_role_ids.sort
 
-      roles_to_create.each do |role|
-        next if role.valid?
-
-        merge_role_errors(role)
-        valid = false
-      end
-
-      valid
+      @person.errors.add(:base, "One or more collaborator roles are invalid")
+      false
     end
 
     def collaborator_roles_for_assignment
-      selected_roles = CollaboratorRole.where(id: selected_collaborator_role_ids).order(:title).to_a
-      selected_roles + roles_to_create.map { |role| CollaboratorRole.find_or_create_by!(title: role.title) }
-    end
-
-    def roles_to_create
-      @roles_to_create ||= parsed_new_collaborator_role_titles.filter_map do |title|
-        next if CollaboratorRole.exists?(title: title)
-
-        CollaboratorRole.new(title: title)
-      end
+      CollaboratorRole.where(id: selected_collaborator_role_ids).order(:title).to_a
     end
 
     def redirect_after_create

@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :accounts, skip: [:registrations]
+  devise_for :accounts, skip: [ :registrations ]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   authenticated :account do
@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    resources :collaborator_roles, only: %i[index new create]
     resources :people do
       resource :account, controller: "accounts"
     end

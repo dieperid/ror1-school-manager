@@ -1,28 +1,19 @@
 <% content_for :title, "Edit Person" %>
 
-<section class="page-heading">
-  <div>
-    <h1>Edit person</h1>
-    <p>Update the personal information linked to this record.</p>
-  </div>
-  <div class="form-actions">
-    <%= link_to "View person", admin_person_path(@person) %>
-    <%= link_to "Back to people", admin_people_path %>
-  </div>
-</section>
+  <section class="page-heading">
+    <div>
+      <h1>Edit person</h1>
+      <p>Update the personal information linked to this record.</p>
+    </div>
+    <div class="form-actions">
+      <%= link_to "View person" , admin_person_path(@person) %>
+        <%= link_to "Back to people" , admin_people_path %>
+    </div>
+  </section>
 
-<section class="card">
-  <%= render "form",
-             person: @person,
-             show_account_fields: false,
-             account_email: nil,
-             account_admin: false,
-             role_type: @person_role_type,
-             collaborator_record: @collaborator_form,
-             collaborator_roles: @collaborator_roles,
-             selected_collaborator_role_ids: @selected_collaborator_role_ids,
-             new_collaborator_role_titles: @new_collaborator_role_titles,
-             student_record: @student_form,
-             departure_reasons: @departure_reasons,
-             submit_label: "Save changes" %>
-</section>
+  <section class="card">
+    <%= render "form" , person: @person, show_account_fields: false, account_email: nil, account_admin: false,
+      role_type: @person_role_type, collaborator_record: @collaborator_form, collaborator_roles: @collaborator_roles,
+      selected_collaborator_role_ids: @selected_collaborator_role_ids, student_record: @student_form, departure_reasons:
+      @departure_reasons, submit_label: "Save changes" %>
+  </section>

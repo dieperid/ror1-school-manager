@@ -1,0 +1,45 @@
+<% content_for :title, "Collaborator Roles" %>
+
+  <section class="page-heading">
+    <div>
+      <h1>Collaborator roles</h1>
+      <p>Create and review the reusable roles available when assigning collaborator details to a person.</p>
+    </div>
+    <%= link_to "New collaborator role" , new_admin_collaborator_role_path, class: "primary-link" %>
+  </section>
+
+  <% if @collaborator_roles.any? %>
+    <section class="card">
+      <table class="people-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Assigned collaborators</th>
+            <th>Last updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @collaborator_roles.each do |collaborator_role| %>
+            <tr>
+              <td><strong>
+                  <%= collaborator_role.title %>
+                </strong></td>
+              <td>
+                <%= collaborator_role.collaborators.size %>
+              </td>
+              <td>
+                <%= l(collaborator_role.updated_at, format: :long) %>
+              </td>
+            </tr>
+            <% end %>
+        </tbody>
+      </table>
+
+      <%= render "shared/pagination" , pagination: @pagination %>
+    </section>
+    <% else %>
+      <section class="card">
+        <h2>No collaborator roles yet</h2>
+        <p>Create the first collaborator role before assigning it to people.</p>
+      </section>
+      <% end %>
