@@ -225,6 +225,22 @@ An admin account can:
 - create linked `Account` records,
 - generate invitation files through account creation.
 
+### Dean account
+
+A dean account is a standard `Account` linked to a `Collaborator` who has the collaborator role title `Dean`.
+
+A dean can:
+
+- access the admin area,
+- manage people, academic structure, units, grades, and related admin screens,
+- generate student report cards.
+
+A dean cannot:
+
+- delete an admin account,
+- delete a person linked to an admin account,
+- disable or remove admin access from an admin account.
+
 ## Disabled Accounts
 
 Authentication checks respect the `enabled` flag.
