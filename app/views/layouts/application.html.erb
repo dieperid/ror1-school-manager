@@ -31,7 +31,7 @@
 
     <% if account_signed_in? %>
       <nav class="topbar-actions">
-        <% if current_account.admin? %>
+        <% if current_admin_or_dean? %>
           <%= link_to "People" , admin_people_path %>
             <%= link_to "Collaborator roles" , admin_collaborator_roles_path %>
               <%= link_to "Formation plans" , admin_formation_plans_path %>
@@ -41,7 +41,7 @@
                       <%= link_to "Lectures" , admin_lectures_path %>
                         <% end %>
 
-                          <% if current_account.admin? || current_collaborator.present? %>
+                          <% if current_admin_or_dean? || current_collaborator.present? %>
                             <%= link_to "Units" , units_path_for_current_account %>
                               <% end %>
 

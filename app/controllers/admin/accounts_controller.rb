@@ -45,6 +45,11 @@ module Admin
         return
       end
 
+      if dean_admin_restriction_attempt?
+        redirect_to admin_person_account_path(@person), alert: "Dean access cannot disable or remove admin access from an admin account."
+        return
+      end
+
       if @account.update(account_update_attributes)
         redirect_to admin_person_account_path(@person), notice: "Account updated."
       else
@@ -55,6 +60,11 @@ module Admin
     def destroy
       if @account == current_account
         redirect_to admin_person_account_path(@person), alert: "You cannot delete your own account while signed in."
+        return
+      end
+
+      if current_dean? && @account.admin?
+        redirect_to admin_person_account_path(@person), alert: "Dean access cannot delete an admin account."
         return
       end
 
@@ -106,6 +116,16 @@ module Admin
 
     def self_lockout_attempt?
       return false unless @account == current_account
+
+      boolean = ActiveModel::Type::Boolean.new
+      enabled = boolean.cast(account_update_params.fetch(:enabled, @account.enabled))
+      admin = boolean.cast(account_update_params.fetch(:admin, @account.admin))
+
+      !enabled || !admin
+    end
+
+    def dean_admin_restriction_attempt?
+      return false unless current_dean? && @account.admin?
 
       boolean = ActiveModel::Type::Boolean.new
       enabled = boolean.cast(account_update_params.fetch(:enabled, @account.enabled))

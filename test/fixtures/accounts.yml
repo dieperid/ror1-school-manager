@@ -41,3 +41,14 @@ outsider:
   sign_in_count: 1
   created_at: <%= 4.days.ago %>
   updated_at: <%= 1.day.ago %>
+
+dean:
+  person: dean_person
+  email: dean@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(Account, "password123") %>
+  enabled: true
+  admin: false
+  invited_at: <%= 2.days.ago %>
+  sign_in_count: 1
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>

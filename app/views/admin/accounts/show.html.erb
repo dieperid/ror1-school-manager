@@ -19,7 +19,7 @@
     </div>
     <div class="detail-item">
       <span class="detail-label">Access level</span>
-      <strong><%= @account.admin? ? "Admin" : "Standard" %></strong>
+      <strong><%= @account.access_label %></strong>
     </div>
     <div class="detail-item">
       <span class="detail-label">Status</span>
@@ -33,7 +33,7 @@
 
   <div class="form-actions">
     <%= link_to "Download invite (.txt)", admin_person_account_invitation_path(@person, format: :txt) %>
-    <% unless @account == current_account %>
+    <% if @account != current_account && !(current_dean? && @account.admin?) %>
       <%= button_to "Delete account",
                     admin_person_account_path(@person),
                     method: :delete,

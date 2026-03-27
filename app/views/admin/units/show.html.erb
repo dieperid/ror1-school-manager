@@ -6,7 +6,7 @@
     <p>Review the unit and the learning modules linked to it.</p>
   </div>
   <div class="form-actions">
-    <% if current_account.admin? %>
+    <% if current_admin_or_dean? %>
       <%= link_to "Edit unit", edit_admin_unit_path(@unit), class: "primary-link" %>
     <% end %>
     <%= link_to "Back to units", units_path_for_current_account %>
@@ -35,7 +35,7 @@
 
   <div class="form-actions">
     <%= link_to "New grade", new_unit_grade_path_for_current_account(@unit), class: "primary-link" %>
-    <% if current_account.admin? %>
+    <% if current_admin_or_dean? %>
       <%= link_to "New lecture", new_admin_lecture_path(unit_id: @unit.id), class: "primary-link" %>
       <%= button_to "Delete unit",
                     admin_unit_path(@unit),
@@ -116,7 +116,7 @@
             <td><%= "#{lecture.start_time.strftime('%H:%M')} - #{lecture.end_time.strftime('%H:%M')}" %></td>
             <td><%= lecture.room.name %></td>
             <td><%= lecture.collaborator.full_name %></td>
-            <td><%= current_account.admin? ? link_to("View", admin_lecture_path(lecture)) : "-" %></td>
+            <td><%= current_admin_or_dean? ? link_to("View", admin_lecture_path(lecture)) : "-" %></td>
           </tr>
         <% end %>
       </tbody>
@@ -146,7 +146,7 @@
         <% @learning_modules.each do |learning_module| %>
           <tr>
             <td><strong><%= learning_module.name %></strong></td>
-            <td><%= current_account.admin? ? link_to("View", admin_learning_module_path(learning_module)) : "-" %></td>
+            <td><%= current_admin_or_dean? ? link_to("View", admin_learning_module_path(learning_module)) : "-" %></td>
           </tr>
         <% end %>
       </tbody>

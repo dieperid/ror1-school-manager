@@ -8,7 +8,11 @@ class Person < ApplicationRecord
   validates :last_name, presence: true
 
   def full_name
-    [first_name, last_name].join(" ")
+    [ first_name, last_name ].join(" ")
+  end
+
+  def dean?
+    collaborator&.dean? || false
   end
 
   def role_type

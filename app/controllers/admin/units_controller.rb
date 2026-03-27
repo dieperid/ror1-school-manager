@@ -58,7 +58,7 @@ module Admin
     end
 
     def accessible_units
-      return Unit.all if current_account.admin?
+      return Unit.all if current_admin_or_dean?
 
       Unit.taught_by(current_collaborator)
     end
@@ -74,7 +74,7 @@ module Admin
     end
 
     def visible_grades
-      return @unit.grades if current_account.admin?
+      return @unit.grades if current_admin_or_dean?
 
       @unit.grades.where(student_id: @unit.eligible_students.select(:id))
     end

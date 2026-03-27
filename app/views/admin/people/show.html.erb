@@ -40,7 +40,7 @@
   </div>
 
   <div class="form-actions">
-    <% unless @person == current_person %>
+    <% if @person != current_person && !(current_dean? && @person.account&.admin?) %>
       <%= button_to "Delete person",
                     admin_person_path(@person),
                     method: :delete,
@@ -120,6 +120,7 @@
         <h2>Grades</h2>
         <p>Grades recorded for this student. Manage them from the relevant unit page.</p>
       </div>
+      <%= link_to "Download report card (.txt)", admin_person_report_card_path(@person, format: :txt), class: "primary-link" %>
     </div>
 
     <% if @person.student.grades.any? %>
@@ -165,7 +166,7 @@
       </div>
       <div class="detail-item">
         <span class="detail-label">Access level</span>
-        <strong><%= @person.account.admin? ? "Admin" : "Standard" %></strong>
+        <strong><%= @person.account.access_label %></strong>
       </div>
       <div class="detail-item">
         <span class="detail-label">Status</span>
@@ -181,7 +182,7 @@
       <%= link_to "View account", admin_person_account_path(@person) %>
       <%= link_to "Edit account", edit_admin_person_account_path(@person) %>
       <%= link_to "Download invite (.txt)", admin_person_account_invitation_path(@person, format: :txt) %>
-      <% unless @person.account == current_account %>
+      <% if @person.account != current_account && !(current_dean? && @person.account.admin?) %>
         <%= button_to "Delete account",
                       admin_person_account_path(@person),
                       method: :delete,

@@ -23,6 +23,14 @@ class Collaborator < ApplicationRecord
     "#{full_name} (#{role_titles.join(', ')})"
   end
 
+  def has_role_title?(title)
+    collaborator_roles.any? { |collaborator_role| collaborator_role.title.casecmp?(title) }
+  end
+
+  def dean?
+    has_role_title?("Dean")
+  end
+
   private
 
   def contract_dates_are_ordered

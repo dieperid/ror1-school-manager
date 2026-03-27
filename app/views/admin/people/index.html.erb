@@ -62,7 +62,7 @@
             <td>
               <% if account.present? %>
                 <div><%= account.email %></div>
-                <div><%= account.admin? ? "Admin account" : "Standard account" %></div>
+                <div><%= "#{account.access_label} account" %></div>
                 <div><%= account.enabled? ? "Enabled" : "Disabled" %></div>
               <% else %>
                 <div>No account linked</div>
@@ -83,7 +83,7 @@
             <td>
               <div><%= link_to "View", admin_person_path(person) %></div>
               <div><%= link_to "Edit", edit_admin_person_path(person) %></div>
-              <% unless person == current_person %>
+              <% if person != current_person && !(current_dean? && account&.admin?) %>
                 <div>
                   <%= button_to "Delete",
                                 admin_person_path(person),

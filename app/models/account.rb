@@ -33,4 +33,19 @@ class Account < ApplicationRecord
   def person_name
     person.full_name
   end
+
+  def dean?
+    person&.dean? || false
+  end
+
+  def admin_or_dean?
+    admin? || dean?
+  end
+
+  def access_label
+    return "Admin" if admin?
+    return "Dean" if dean?
+
+    "Standard"
+  end
 end

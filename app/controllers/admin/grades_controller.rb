@@ -52,7 +52,7 @@ module Admin
     end
 
     def set_unit
-      @unit = if current_account.admin?
+      @unit = if current_admin_or_dean?
         Unit.find(params[:unit_id])
       else
         Unit.taught_by(current_collaborator).find(params[:unit_id])
@@ -79,13 +79,13 @@ module Admin
     end
 
     def visible_grades
-      return @unit.grades if current_account.admin?
+      return @unit.grades if current_admin_or_dean?
 
       @unit.grades.where(student_id: @unit.eligible_students.select(:id))
     end
 
     def available_students
-      return Student.all if current_account.admin?
+      return Student.all if current_admin_or_dean?
 
       @unit.eligible_students
     end

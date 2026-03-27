@@ -15,7 +15,7 @@
   <div class="detail-grid">
     <div class="detail-item">
       <span class="detail-label">Student</span>
-      <strong><%= current_account.admin? ? link_to(@grade.student_name, admin_person_path(@grade.student.person)) : @grade.student_name %></strong>
+      <strong><%= current_admin_or_dean? ? link_to(@grade.student_name, admin_person_path(@grade.student.person)) : @grade.student_name %></strong>
     </div>
     <div class="detail-item">
       <span class="detail-label">Unit</span>

@@ -6,7 +6,7 @@ module Admin
     private
 
     def require_admin!
-      return if current_account&.admin?
+      return if current_admin_or_dean?
       return if collaborator_access_allowed?
 
       redirect_to root_path, alert: "You are not allowed to access the admin area."

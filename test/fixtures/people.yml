@@ -63,6 +63,19 @@ outsider_person:
   created_at: <%= 4.days.ago %>
   updated_at: <%= 1.day.ago %>
 
+dean_person:
+  avs_number: "756.0000.0000.08"
+  first_name: "Dana"
+  last_name: "Dean"
+  city: "Vevey"
+  birth_date: 1986-11-03
+  postal_code: "1800"
+  street: "College Avenue"
+  street_number: 9
+  phone_number: "0785556666"
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>
+
 business_student_person:
   avs_number: "756.0000.0000.07"
   first_name: "Bianca"

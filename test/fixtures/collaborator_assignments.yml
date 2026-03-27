@@ -3,3 +3,9 @@ admin_is_administrator:
   collaborator_role: administrator_role
   created_at: <%= 5.days.ago %>
   updated_at: <%= 1.day.ago %>
+
+dean_is_dean:
+  collaborator: dean_collaborator
+  collaborator_role: dean_role
+  created_at: <%= 4.days.ago %>
+  updated_at: <%= 1.day.ago %>

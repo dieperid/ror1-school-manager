@@ -3,9 +3,9 @@
 <section class="page-heading">
   <div>
     <h1>Units</h1>
-    <p><%= current_account.admin? ? "Manage units and review the modules that use them." : "Review the units you teach and manage their grades." %></p>
+    <p><%= current_admin_or_dean? ? "Manage units and review the modules that use them." : "Review the units you teach and manage their grades." %></p>
   </div>
-  <% if current_account.admin? %>
+  <% if current_admin_or_dean? %>
     <%= link_to "New unit", new_admin_unit_path, class: "primary-link" %>
   <% end %>
 </section>
@@ -31,7 +31,7 @@
             <td><%= pluralize(@grade_counts.fetch(unit.id, 0), "grade") %></td>
             <td>
               <div><%= link_to "View", unit_path_for_current_account(unit) %></div>
-              <% if current_account.admin? %>
+              <% if current_admin_or_dean? %>
                 <div><%= link_to "Edit", edit_admin_unit_path(unit) %></div>
                 <div>
                   <%= button_to "Delete",
@@ -52,6 +52,6 @@
 <% else %>
   <section class="card">
     <h2>No units yet</h2>
-    <p><%= current_account.admin? ? "Create units first so you can attach them to learning modules." : "No units are assigned to your lectures yet." %></p>
+    <p><%= current_admin_or_dean? ? "Create units first so you can attach them to learning modules." : "No units are assigned to your lectures yet." %></p>
   </section>
 <% end %>

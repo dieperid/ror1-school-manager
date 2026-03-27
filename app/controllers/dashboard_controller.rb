@@ -8,7 +8,7 @@ class DashboardController < ApplicationController
   private
 
   def redirect_non_admins
-    return if current_account.admin?
+    return if current_admin_or_dean?
 
     redirect_to profile_path
   end

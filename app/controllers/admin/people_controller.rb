@@ -1,7 +1,7 @@
 module Admin
   class PeopleController < BaseController
     before_action :build_person, only: %i[new create]
-    before_action :set_person, only: %i[show edit update destroy]
+    before_action :set_person, only: %i[show edit update destroy report_card]
     before_action :prepare_form_dependencies, only: %i[new edit]
 
     def index
@@ -49,9 +49,28 @@ module Admin
         return
       end
 
+      if current_dean? && @person.account&.admin?
+        redirect_to admin_person_path(@person), alert: "Dean access cannot delete a person linked to an admin account."
+        return
+      end
+
       deleted_name = @person.full_name
       @person.destroy!
       redirect_to admin_people_path, notice: "#{deleted_name} was deleted."
+    end
+
+    def report_card
+      unless @person.student.present?
+        redirect_to admin_person_path(@person), alert: "Report cards are only available for students."
+        return
+      end
+
+      send_data(
+        report_card_contents,
+        filename: report_card_filename,
+        type: "text/plain; charset=utf-8",
+        disposition: "attachment"
+      )
     end
 
     private
@@ -303,6 +322,51 @@ module Admin
 
     def success_message
       "#{@person.full_name} was created."
+    end
+
+    def report_card_student
+      @person.student
+    end
+
+    def report_card_grades
+      report_card_student.grades.includes(:unit).to_a.sort_by do |grade|
+        [grade.unit.name, grade.awarded_on, grade.created_at]
+      end
+    end
+
+    def report_card_average(grades)
+      return "N/A" if grades.empty?
+
+      total = grades.reduce(BigDecimal("0")) { |sum, grade| sum + grade.value }
+      format("%.2f", total / grades.size)
+    end
+
+    def report_card_contents
+      student = report_card_student
+      grades = report_card_grades
+
+      grade_lines = grades.map do |grade|
+        "- #{grade.unit.name} | #{I18n.l(grade.awarded_on)} | #{grade.value}"
+      end
+
+      <<~TEXT
+        Ror1 School Manager report card
+
+        Generated on: #{I18n.l(Date.current)}
+        Student: #{@person.full_name}
+        AVS number: #{@person.avs_number}
+        School classes: #{student.school_class_names.presence&.join(", ") || "None"}
+        Formation plans: #{student.formation_plans.map(&:name).presence&.join(", ") || "None"}
+        Total grades: #{grades.size}
+        Average grade: #{report_card_average(grades)}
+
+        Recorded grades:
+        #{grade_lines.presence&.join("\n") || "- No grades recorded yet"}
+      TEXT
+    end
+
+    def report_card_filename
+      "#{@person.full_name.parameterize.presence || "student"}-report-card.txt"
     end
   end
 end

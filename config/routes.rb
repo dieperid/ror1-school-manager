@@ -36,6 +36,11 @@ Rails.application.routes.draw do
         to: "accounts#invitation",
         as: :person_account_invitation,
         defaults: { format: :txt }
+
+    get "people/:id/report_card",
+        to: "people#report_card",
+        as: :person_report_card,
+        defaults: { format: :txt }
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
